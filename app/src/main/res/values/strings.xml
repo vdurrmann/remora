@@ -1,0 +1,30 @@
+<resources>
+    // Activity names
+    <string name="app_name">RFID</string>
+    <string name="act_splash_name">Initialisation</string>
+    <string name="act_add_prod_name">Valider une étape</string>
+    <string name="act_preference">Préférences</string>
+
+    // Add production activity
+    <string name="operator">Opérateur : </string>
+    <string name="step">Etape : </string>
+    <string name="patient">Patient : </string>
+    <string name="folder">Dossier</string>
+    <string name="no_patient">Pas de patient à ce numéro</string>
+
+    // Common
+    <string name="validate">Valider</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    //Preferences
+    <string name="pref_server">Serveur</string>
+    <string name="pref_server_summaray">Adresse du serveur où se trouve la base de donnée</string>
+    <string name="pref_username">Utilisateur</string>
+    <string name="pref_username_sumary">Nom de l\'utilisateur pour se connecter à la base de donnée</string>
+    <string name="pref_password">Mot de passe</string>
+    <string name="pref_password_sumary">Mot de passe pour se connecter à la base de donnée</string>
+    <string name="pref_database">Base de donnée</string>
+    <string name="pref_database_sumary">Nom de la base de donnée</string>
+
+</resources>

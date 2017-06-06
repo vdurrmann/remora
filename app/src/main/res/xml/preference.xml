@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+  <PreferenceCategory android:title="Réseau">
+
+    <EditTextPreference
+        android:key="pref_server"
+        android:title="@string/pref_server"
+        android:summary="@string/pref_server_summaray"
+        android:dialogTitle="@string/pref_server"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel" />
+
+      <EditTextPreference
+          android:key="pref_username"
+          android:title="@string/pref_username"
+          android:summary="@string/pref_username_sumary"
+          android:dialogTitle="@string/pref_username_sumary"
+          android:positiveButtonText="@string/ok"
+          android:negativeButtonText="@string/cancel" />
+
+      <EditTextPreference
+          android:key="pref_password"
+          android:title="@string/pref_password"
+          android:summary="@string/pref_password_sumary"
+          android:dialogTitle="@string/pref_password"
+          android:positiveButtonText="@string/ok"
+          android:negativeButtonText="@string/cancel"
+          android:inputType="textPassword" />
+
+      <EditTextPreference
+          android:key="pref_database"
+          android:title="@string/pref_database"
+          android:summary="@string/pref_database_sumary"
+          android:dialogTitle="@string/pref_database"
+          android:positiveButtonText="@string/ok"
+          android:negativeButtonText="@string/cancel" />
+
+  </PreferenceCategory>
+  
+</PreferenceScreen>
+
