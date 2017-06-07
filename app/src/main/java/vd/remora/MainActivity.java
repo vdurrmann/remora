@@ -38,17 +38,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Get saved data in case of configuration changes
-        SavedData l_saved_data = (SavedData)getLastNonConfigurationInstance();
-        if( l_saved_data != null ){
-            m_operators = l_saved_data.operators();
-            m_steps = l_saved_data.steps();
-        }
-        // Else, get data from previous intent
-        else{
-            m_operators = getIntent().getStringArrayListExtra( "Operators" );
-            m_steps = getIntent().getStringArrayListExtra( "Steps" );
-        }
+        // Get data from intent
+        m_operators = getIntent().getStringArrayListExtra( "Operators" );
+        m_steps = getIntent().getStringArrayListExtra( "Steps" );
 
         // Select default Fragment
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
@@ -56,14 +48,6 @@ public class MainActivity extends AppCompatActivity
         tx.commit();
         getSupportActionBar().setTitle( getString(R.string.nav_add_prod) );;
     }
-
-    /*@Override
-    public Object onRetainNonConfigurationInstance(){
-        SavedData l_saved_data = new SavedData();
-        l_saved_data.setOperators( m_operators );
-        l_saved_data.setSteps( m_steps );
-        return l_saved_data;
-    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
