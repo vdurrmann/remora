@@ -1,41 +1,21 @@
 package vd.remora;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity{
-
-    // Widgets
-    Button m_btn_validate;
-    Spinner m_spinner_operator;
-    Spinner m_spinner_steps;
-    EditText m_txt_folder;
-    TextView m_txt_patient;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     //Data
     protected ArrayList<String> m_operators = new ArrayList<>();
@@ -44,23 +24,19 @@ public class MainActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView( R.layout.activity_add_prod );
+        setContentView( R.layout.activity_main );
 
-        m_spinner_operator = (Spinner) findViewById( R.id.spinner_operator);
-        m_spinner_steps = (Spinner) findViewById( R.id.spinner_step );
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        m_txt_patient = (TextView)findViewById( R.id.txt_patient_name );
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        m_txt_folder = (EditText) findViewById( R.id.folder );
-        m_txt_folder.addTextChangedListener( folderTextWatcher );
-
-        m_btn_validate = (Button)findViewById( R.id.btn_validate );
-        m_btn_validate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                insertProduction();
-            }
-        });
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         // Get saved data in case of configuration changes
         SavedData l_saved_data = (SavedData)getLastNonConfigurationInstance();
@@ -74,161 +50,72 @@ public class MainActivity extends Activity{
             m_steps = getIntent().getStringArrayListExtra( "Steps" );
         }
 
-        this.updateList( m_operators, R.id.spinner_operator );
-        this.updateList( m_steps, R.id.spinner_step );
+        // Select default Fragment
+        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+        tx.replace(R.id.content_main, new AddProductionFragment());
+        tx.commit();
+        getSupportActionBar().setTitle( getString(R.string.nav_add_prod) );;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
-            case R.id.menu_preference:
-                Intent intent = new Intent( this, PreferenceActivity.class );
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
+    /*@Override
     public Object onRetainNonConfigurationInstance(){
         SavedData l_saved_data = new SavedData();
         l_saved_data.setOperators( m_operators );
         l_saved_data.setSteps( m_steps );
         return l_saved_data;
-    }
+    }*/
 
-    protected void updateList( ArrayList<String> a_list, int a_widget_id ){
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, a_list);
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner l_spinner = (Spinner) findViewById( a_widget_id );
-        l_spinner.setAdapter(adapter);
-    }
+        // Choose right Fragment and actionbar title
+        Fragment newFragment = null;
+        String l_title = "";
 
-    protected void setValidateEnable( boolean a_enable ){
-        m_btn_validate.setEnabled(a_enable);
-    }
+        if (id == R.id.nav_add_prod) {
+            newFragment = new AddProductionFragment();
+            l_title = getString( R.string.nav_add_prod );
 
-    // Text watcher on patient folder entries
-    private TextWatcher folderTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if( s.toString().length() > 0 ) {
-                findPatientName();
-            }
-            else{
-                updatePatientName( "" );
-                setValidateEnable(false);
-            }
+        } else if (id == R.id.nav_operators) {
+            newFragment = new OperatorsFragment();
+            l_title = getString( R.string.nav_operators );
+        } else if( id == R.id.nav_settings ){
+            Intent l_intent = new Intent( this, PreferenceActivity.class );
+            startActivity( l_intent );
         }
-    };
 
-    protected void insertProduction(){
-        String l_operator = m_spinner_operator.getSelectedItem().toString();
-        String l_step = m_spinner_steps.getSelectedItem().toString();
-        String l_folder = m_txt_folder.getText().toString();
+        // change Fragment
+        if( newFragment != null ) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        DBScripts l_DBScripts = new DBScripts( this.getApplicationContext() );
-        String url = l_DBScripts.createInsertProdURL( l_operator, l_step, l_folder );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                String l_txt = response.compareTo("1") == 0 ? "Etape validée" : "Un problème est survenu";
-                Toast.makeText( MainActivity.this, l_txt, Toast.LENGTH_LONG ).show();
-            }
-        },
-        new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText( MainActivity.this, error.getMessage().toString(),Toast.LENGTH_LONG ).show();
-            }
-        });
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
-    /**
-     * Query database to find patient name from input folder
-     */
-    protected void findPatientName(){
-        String l_folder = formatFolder( m_txt_folder.getText().toString() );
-
-        DBScripts l_DBScripts = new DBScripts( this.getApplicationContext() );
-        String url = l_DBScripts.createFindPatientURL( l_folder );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray result = jsonObject.getJSONArray(DBScripts.JSON_ARRAY);
-
-                    // Update patient name
-                    String l_patient_name = getResources().getString(R.string.no_patient);
-                    boolean l_is_valid = false;
-                    for (int i = 0; i < result.length(); i++){
-                        JSONObject obj = result.getJSONObject(i);
-
-                        String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
-                        String l_surname = obj.getString(DBScripts.KEY_PATIENT_SURNAME);
-                        l_patient_name = l_name + " " + l_surname;
-                        l_is_valid = true;
-                    }
-
-                    updatePatientName( l_patient_name );
-                    setValidateEnable( l_is_valid );
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        },
-        new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                updatePatientName( "An error occured" );
-            }
-        });
-
-        RequestQueue requestQueue = Volley.newRequestQueue( this.getApplicationContext() );
-        requestQueue.add(stringRequest);
-    }
-
-    void updatePatientName( String a_name ){
-        m_txt_patient.setText( a_name );
-    }
-
-    String formatFolder( String a_folder ){
-        try{
-            Integer.parseInt(a_folder);//test it is an integer
-            int length = a_folder.length();
-            switch(length){
-                case 1 : a_folder = "000"+a_folder;
-                    break;
-                case 2 : a_folder = "00"+a_folder;
-                    break;
-                case 3 : a_folder = "0"+a_folder;
-                    break;
-                default :break;
-            }
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack
+            transaction.replace(R.id.content_main, newFragment);
+            transaction.addToBackStack(null);
+            // Commit the transaction
+            transaction.commit();
         }
-        catch(NumberFormatException e){}
-        return a_folder;
+
+        // Change actionbar title
+        if( getSupportActionBar() != null ){
+            getSupportActionBar().setTitle( l_title );;
+        }
+
+        // Close drawer
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    public ArrayList<String> getOperators(){
+        return m_operators;
+    }
+
+    public ArrayList<String> getSteps(){
+        return m_steps;
     }
 
 }

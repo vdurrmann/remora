@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import java.io.InputStream;
 import java.util.GregorianCalendar;
 
+import static android.content.Context.MODE_PRIVATE;
+
 class DBScripts {
 
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
@@ -26,12 +28,11 @@ class DBScripts {
     private String m_password;
     private String m_database;
 
-    DBScripts(Context a_context){
-        SharedPreferences l_preferences = PreferenceManager.getDefaultSharedPreferences( a_context.getApplicationContext() );
-        m_server = l_preferences.getString( "pref_server", "" );
-        m_username = l_preferences.getString( "pref_username", "" );
-        m_password = l_preferences.getString( "pref_password", "" );
-        m_database = l_preferences.getString( "pref_database", "" );
+    DBScripts( SharedPreferences a_preferences ){
+        m_server = a_preferences.getString( "pref_server", "" );
+        m_username = a_preferences.getString( "pref_username", "" );
+        m_password = a_preferences.getString( "pref_password", "" );
+        m_database = a_preferences.getString( "pref_database", "" );
     }
 
     /**

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -40,7 +41,7 @@ public class SplashScreenActivity extends Activity {
     protected void initialize(){
         loading = ProgressDialog.show( this, "Please wait...", "Initializing application...", false, false );
 
-        DBScripts l_DBScripts = new DBScripts( this.getApplicationContext() );
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(getApplicationContext()) );
         String url = l_DBScripts.createAllCardsURL();
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
@@ -57,7 +58,7 @@ public class SplashScreenActivity extends Activity {
         new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SplashScreenActivity.this,error.getMessage().toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText( SplashScreenActivity.this, getString(R.string.pref_error), Toast.LENGTH_LONG).show();
 
                 loading.dismiss();
                 switchToPreferenceActivity();

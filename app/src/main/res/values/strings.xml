@@ -1,9 +1,19 @@
 <resources>
     // Activity names
-    <string name="app_name">RFID</string>
+    <string name="app_name">Remora</string>
+    <string name="app_resume">Suivi de production de chaussures orthopédiques</string>
     <string name="act_splash_name">Initialisation</string>
     <string name="act_add_prod_name">Valider une étape</string>
     <string name="act_preference">Préférences</string>
+
+    <string name="support_email">vincent.durrmann@orange.fr</string>
+
+    // Navigation bar
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_add_prod">Valider une étape</string>
+    <string name="nav_operators">Opérateurs</string>
+    <string name="nav_preferences">Préférences</string>
 
     // Add production activity
     <string name="operator">Opérateur : </string>
@@ -16,15 +26,19 @@
     <string name="validate">Valider</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Sauver</string>
 
     //Preferences
     <string name="pref_server">Serveur</string>
     <string name="pref_server_summaray">Adresse du serveur où se trouve la base de donnée</string>
+    <string name="pref_server_hint">xxx.xxx.x.x</string>
     <string name="pref_username">Utilisateur</string>
     <string name="pref_username_sumary">Nom de l\'utilisateur pour se connecter à la base de donnée</string>
     <string name="pref_password">Mot de passe</string>
     <string name="pref_password_sumary">Mot de passe pour se connecter à la base de donnée</string>
     <string name="pref_database">Base de donnée</string>
     <string name="pref_database_sumary">Nom de la base de donnée</string>
+
+    <string name="pref_error">Impossible de mettre à jour les données. Veuillez vérifier les préférences.</string>
 
 </resources>
