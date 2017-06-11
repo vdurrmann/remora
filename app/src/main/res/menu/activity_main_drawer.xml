@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/group_features">
 
         <item
             android:id="@+id/nav_add_prod"
@@ -12,6 +13,11 @@
             android:id="@+id/nav_operators"
             android:icon="@drawable/ic_menu_people"
             android:title="@string/nav_operators" />
+
+    </group>
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/group_settings">
 
         <item
             android:id="@+id/nav_settings"

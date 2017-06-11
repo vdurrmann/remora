@@ -110,7 +110,7 @@ public class AddProductionFragment extends Fragment {
         String l_step = m_spinner_steps.getSelectedItem().toString();
         String l_folder = m_txt_folder.getText().toString();
 
-        DBScripts l_DBScripts = new DBScripts( getActivity().getPreferences(getActivity().MODE_PRIVATE) );
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(getContext()) );
         String url = l_DBScripts.createInsertProdURL( l_operator, l_step, l_folder );
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override

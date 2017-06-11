@@ -26,6 +26,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_main );
 
+        // Get data from intent
+        m_operators = getIntent().getStringArrayListExtra( "Operators" );
+        m_steps = getIntent().getStringArrayListExtra( "Steps" );
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -38,15 +42,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Get data from intent
-        m_operators = getIntent().getStringArrayListExtra( "Operators" );
-        m_steps = getIntent().getStringArrayListExtra( "Steps" );
-
         // Select default Fragment
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.content_main, new AddProductionFragment());
-        tx.commit();
-        getSupportActionBar().setTitle( getString(R.string.nav_add_prod) );;
+        MenuItem l_default_item = navigationView.getMenu().getItem(0);
+        l_default_item.setChecked(true);
+        this.onNavigationItemSelected( l_default_item );
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 
         // Choose right Fragment and actionbar title
         Fragment newFragment = null;
-        String l_title = "";
+        String l_title = getSupportActionBar().getTitle().toString();
 
         if (id == R.id.nav_add_prod) {
             newFragment = new AddProductionFragment();
@@ -65,6 +64,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_operators) {
             newFragment = new OperatorsFragment();
+
+            Bundle l_bundle = new Bundle();
+            l_bundle.putStringArrayList( OperatorsFragment.KEY_OPERATOR, m_operators);
+            newFragment.setArguments(l_bundle);
+
             l_title = getString( R.string.nav_operators );
         } else if( id == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack
             transaction.replace(R.id.content_main, newFragment);
-            transaction.addToBackStack(null);
+            //transaction.addToBackStack(null);
             // Commit the transaction
             transaction.commit();
         }

@@ -14,6 +14,7 @@ class DBScripts {
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
+    private static final String PHP_INSERT_OPERATOR = "db_rfid_insert_operator.php";
 
     // JSON type found in response
     static final String JSON_ARRAY = "result";
@@ -62,6 +63,18 @@ class DBScripts {
         l_url += "&operator=" + a_operator;
         l_url += "&step=" + a_step;
         l_url += "&folder=" + a_folder;
+        return l_url;
+    }
+
+    String createInsertOperatorURL( String a_name ){
+        GregorianCalendar l_now = new GregorianCalendar();
+        java.text.SimpleDateFormat l_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String l_date = l_format.format( l_now.getTimeInMillis() );
+
+        // Create URL
+        String l_url = _addDBConnectionData( PHP_INSERT_OPERATOR );
+        l_url += "&name=" + a_name;
+        l_url += "&id=" + l_date;
         return l_url;
     }
 
