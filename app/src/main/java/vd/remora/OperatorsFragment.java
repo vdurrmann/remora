@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +26,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import vd.remora.Operator.Operator;
+import vd.remora.Operator.OperatorAdapter;
 
 /**
  * Fragment to list Operators
@@ -34,16 +43,29 @@ public class OperatorsFragment extends Fragment {
 
     static final String KEY_OPERATOR = "operator";
 
+    ListView m_list_view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_operator, container, false);
 
         // Fill operator list
-        ArrayList<String> l_operators = getArguments().getStringArrayList( KEY_OPERATOR );
-        ListView l_list_view = (ListView) view.findViewById(R.id.list_operators);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>( getActivity(),
-                android.R.layout.simple_list_item_1, l_operators);
-        l_list_view.setAdapter(adapter);
+        List<Operator> l_operators = this.createOperatorList( getArguments().getStringArrayList(KEY_OPERATOR) );
+        m_list_view = (ListView) view.findViewById(R.id.list_operators);
+        m_list_view.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        m_list_view.clearChoices();
+
+        OperatorAdapter l_adapter = new OperatorAdapter( getContext(), l_operators );
+        m_list_view.setAdapter( l_adapter );
+
+        m_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                OperatorAdapter l_adapter = (OperatorAdapter)m_list_view.getAdapter();
+                l_adapter.setSelectedItem( position );
+                l_adapter.notifyDataSetChanged();
+            }
+        });
 
         //
         FloatingActionButton l_btn = (FloatingActionButton)view.findViewById( R.id.btn_add_operator );
@@ -113,13 +135,18 @@ public class OperatorsFragment extends Fragment {
     }
 
     protected void addOperatorToList( String a_operator ){
-        ListView l_list_view = (ListView) getView().findViewById(R.id.list_operators);
-        ArrayAdapter<String> l_adapter = (ArrayAdapter<String>)l_list_view.getAdapter();
+        OperatorAdapter l_adapter = (OperatorAdapter) m_list_view.getAdapter();
         if( l_adapter != null ){
-            l_adapter.add( a_operator );
+            l_adapter.add( new Operator(a_operator) );
         }
+    }
 
-
+    protected List<Operator> createOperatorList(ArrayList<String> a_operators_name ){
+        List<Operator> l_operators = new ArrayList<Operator>();
+        for (String name : a_operators_name ){
+            l_operators.add( new Operator( name ) );
+        }
+        return l_operators;
     }
 
 }
