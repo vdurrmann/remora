@@ -8,7 +8,7 @@
  $NAME = $_GET["name"];
  
  # Select all cards
- $sql = "INSERT INTO card_rfid VALUES ( \"'$ID'\", \"Operateur\", \"'$NAME'\" )";
+ $sql = "INSERT INTO card_rfid VALUES ( '$ID', \"Operateur\", '$NAME' )";
  if ($con->query($sql) === TRUE) {
     echo "1";
 } else {
