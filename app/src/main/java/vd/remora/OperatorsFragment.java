@@ -1,5 +1,6 @@
 package vd.remora;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,27 +35,27 @@ import java.util.ListIterator;
 
 import vd.remora.Operator.Operator;
 import vd.remora.Operator.OperatorAdapter;
+import vd.remora.Operator.OperatorListenerInterface;
 
 /**
  * Fragment to list Operators
  * Fetch operator list in Bundle under "operators" key
  */
-public class OperatorsFragment extends Fragment {
-
-    static final String KEY_OPERATOR = "operator";
+public class OperatorsFragment extends Fragment implements OperatorListenerInterface {
 
     ListView m_list_view;
+    private ProgressDialog m_loading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_operator, container, false);
 
         // Fill operator list
-        List<Operator> l_operators = this.createOperatorList( getArguments().getStringArrayList(KEY_OPERATOR) );
         m_list_view = (ListView) view.findViewById(R.id.list_operators);
         m_list_view.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         m_list_view.clearChoices();
 
+        List<Operator> l_operators = new ArrayList<>();
         OperatorAdapter l_adapter = new OperatorAdapter( getContext(), l_operators );
         m_list_view.setAdapter( l_adapter );
 
@@ -75,6 +76,8 @@ public class OperatorsFragment extends Fragment {
                 addNewOperator();
             }
         });
+
+        m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
 
         return view;
     }
@@ -142,11 +145,23 @@ public class OperatorsFragment extends Fragment {
     }
 
     protected List<Operator> createOperatorList(ArrayList<String> a_operators_name ){
-        List<Operator> l_operators = new ArrayList<Operator>();
+        List<Operator> l_operators = new ArrayList<>();
         for (String name : a_operators_name ){
             l_operators.add( new Operator( name ) );
         }
         return l_operators;
     }
 
+    @Override
+    public void setOperators(ArrayList<String> a_operators) {
+        OperatorAdapter l_adapter = (OperatorAdapter)m_list_view.getAdapter();
+        l_adapter.clear();
+        l_adapter.addAll( createOperatorList(a_operators) );
+        l_adapter.notifyDataSetChanged();
+
+        m_loading.dismiss();
+    }
+
+    @Override
+    public void setSteps(ArrayList<String> a_steps) {}
 }

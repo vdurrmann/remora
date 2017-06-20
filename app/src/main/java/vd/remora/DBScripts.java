@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 
 import static android.content.Context.MODE_PRIVATE;
 
-class DBScripts {
+public class DBScripts {
 
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
@@ -17,11 +17,11 @@ class DBScripts {
     private static final String PHP_INSERT_OPERATOR = "db_rfid_insert_operator.php";
 
     // JSON type found in response
-    static final String JSON_ARRAY = "result";
-    static final String KEY_CARD_TYPE = "type";
-    static final String KEY_CARD_NAME = "name";
-    static final String KEY_PATIENT_NAME = "name";
-    static final String KEY_PATIENT_SURNAME = "surname";
+    public static final String JSON_ARRAY = "result";
+    public static final String KEY_CARD_TYPE = "type";
+    public static final String KEY_CARD_NAME = "name";
+    public static final String KEY_PATIENT_NAME = "name";
+    public static final String KEY_PATIENT_SURNAME = "surname";
 
 
     private String m_server;
@@ -29,7 +29,7 @@ class DBScripts {
     private String m_password;
     private String m_database;
 
-    DBScripts( SharedPreferences a_preferences ){
+    public DBScripts(SharedPreferences a_preferences){
         m_server = a_preferences.getString( "pref_server", "" );
         m_username = a_preferences.getString( "pref_username", "" );
         m_password = a_preferences.getString( "pref_password", "" );
@@ -39,7 +39,7 @@ class DBScripts {
     /**
      * Create URL to get all cards list
      */
-    String createAllCardsURL(){
+    public String createAllCardsURL(){
         String l_url = _addDBConnectionData( PHP_ALL_CARDS );
         return l_url;
     }

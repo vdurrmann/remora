@@ -1,7 +1,9 @@
 package vd.remora;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,24 +13,34 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import java.util.ArrayList;
 
+import vd.remora.Operator.OperatorController;
+import vd.remora.Operator.OperatorErrorListener;
+import vd.remora.Operator.OperatorListenerInterface;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        OperatorErrorListener{
 
     //Data
-    protected ArrayList<String> m_operators = new ArrayList<>();
-    protected ArrayList<String> m_steps = new ArrayList<>();
+    protected OperatorController m_operator_controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_main );
 
-        // Get data from intent
-        m_operators = getIntent().getStringArrayListExtra( "Operators" );
-        m_steps = getIntent().getStringArrayListExtra( "Steps" );
+        // Get data from database
+        m_operator_controller = new OperatorController();
+        m_operator_controller.setErrorListener( this );
+        fetchInDB();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,17 +71,19 @@ public class MainActivity extends AppCompatActivity
         String l_title = getSupportActionBar().getTitle().toString();
 
         if (id == R.id.nav_add_prod) {
-            newFragment = new AddProductionFragment();
             l_title = getString( R.string.nav_add_prod );
+            newFragment = new AddProductionFragment();
+
+            m_operator_controller.setListener( (OperatorListenerInterface)newFragment );
+            m_operator_controller.fetchOnDB( getApplicationContext() );
 
         } else if (id == R.id.nav_operators) {
+            l_title = getString( R.string.nav_operators );
             newFragment = new OperatorsFragment();
 
-            Bundle l_bundle = new Bundle();
-            l_bundle.putStringArrayList( OperatorsFragment.KEY_OPERATOR, m_operators);
-            newFragment.setArguments(l_bundle);
+            m_operator_controller.setListener( (OperatorListenerInterface)newFragment );
+            m_operator_controller.fetchOnDB( getApplicationContext() );
 
-            l_title = getString( R.string.nav_operators );
         } else if( id == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
             startActivity( l_intent );
@@ -98,12 +112,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public ArrayList<String> getOperators(){
-        return m_operators;
+    private void fetchInDB(){
+        m_operator_controller.fetchOnDB( getApplicationContext() );
     }
 
-    public ArrayList<String> getSteps(){
-        return m_steps;
+    @Override
+    public void onError(String response) {
+        Intent l_intent = new Intent( this, PreferenceActivity.class );
+        startActivity( l_intent );
+        this.finish();
     }
-
 }

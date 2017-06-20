@@ -40,7 +40,7 @@ public class PreferenceActivity extends Activity {
      * Go to MainActivity and finish this
      */
     protected void switchToMainActivity(){
-        Intent l_intent = new Intent( this, SplashScreenActivity.class );
+        Intent l_intent = new Intent( this, MainActivity.class );
         startActivity( l_intent );
         this.finish();
     }

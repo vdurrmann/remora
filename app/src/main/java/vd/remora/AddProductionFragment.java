@@ -1,5 +1,7 @@
 package vd.remora;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -32,12 +34,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import vd.remora.Operator.OperatorListenerInterface;
+
 /**
  * Created by Vincent-LDLC on 07/06/2017.
  */
 
-public class AddProductionFragment extends Fragment {
+public class AddProductionFragment extends Fragment implements OperatorListenerInterface{
 
+    private ProgressDialog m_loading;
     // Widgets
     Button m_btn_validate;
     Spinner m_spinner_operator;
@@ -66,9 +71,10 @@ public class AddProductionFragment extends Fragment {
         });
 
         // Fill UI
-        MainActivity l_activity = (MainActivity)getActivity();
+        /*MainActivity l_activity = (MainActivity)getActivity();
         this.updateList( l_activity.getOperators(), m_spinner_operator );
-        this.updateList( l_activity.getSteps(), m_spinner_steps );
+        this.updateList( l_activity.getSteps(), m_spinner_steps );*/
+        m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
 
         return view;
     }
@@ -198,4 +204,15 @@ public class AddProductionFragment extends Fragment {
         return a_folder;
     }
 
+    @Override
+    public void setOperators(ArrayList<String> a_operators) {
+        this.updateList( a_operators, m_spinner_operator );
+        m_loading.dismiss();
+    }
+
+    @Override
+    public void setSteps(ArrayList<String> a_steps) {
+        this.updateList( a_steps, m_spinner_steps );
+        m_loading.dismiss();
+    }
 }
