@@ -14,6 +14,7 @@
     <string name="nav_add_prod">Valider une étape</string>
     <string name="nav_operators">Opérateurs</string>
     <string name="nav_preferences">Préférences</string>
+    <string name="nav_patients">Patients</string>
 
     // Add production activity
     <string name="operator">Opérateur : </string>
@@ -41,5 +42,10 @@
     <string name="pref_database_sumary">Nom de la base de donnée</string>
 
     <string name="pref_error">Impossible de mettre à jour les données. Veuillez vérifier les préférences.</string>
+
+    // Loading pop-ups
+    <string name="load_wait">"Veuillez patienter"</string>
+    <string name="load_load_data">"Chargement des données"</string>
+    <string name="load_load_patients">"Chargement des patients"</string>
 
 </resources>

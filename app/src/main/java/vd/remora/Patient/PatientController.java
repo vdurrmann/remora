@@ -1,6 +1,7 @@
-package vd.remora.Operator;
+package vd.remora.Patient;
 
 import android.content.Context;
+import android.database.DatabaseErrorHandler;
 import android.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
@@ -18,34 +19,33 @@ import java.util.ArrayList;
 import vd.remora.DBScripts;
 import vd.remora.DataBaseErrorListener;
 
-public class OperatorController {
 
-    private OperatorListenerInterface m_listener = null;
+public class PatientController {
+
+    private ArrayList<Patient> m_patients = new ArrayList<>();
+    private PatientListenerInterface m_listener = null;
     private DataBaseErrorListener m_error_listener = null;
-    private ArrayList<String> m_operators = new ArrayList<>();
-    private ArrayList<String> m_steps = new ArrayList<>();
 
-    public void setListener( OperatorListenerInterface a_listener ){
+    public void setListener( PatientListenerInterface a_listener ){
         m_listener = a_listener;
     }
 
-    public void setErrorListener( DataBaseErrorListener a_listerner ){
-        m_error_listener = a_listerner;
-    }
+    public void setErrorListener( DataBaseErrorListener a_listener ){ m_error_listener = a_listener; }
 
     public void fetchOnDB( Context a_context ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.createAllCardsURL();
+        String url = l_DBScripts.createSelectPatientURL();
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                responseToLists(response, m_operators, m_steps);
+                responseToLists(response, m_patients);
                 notifyListener();
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        String err = error.toString();
                         m_error_listener.onError( error.toString() );
                     }
                 });
@@ -55,25 +55,8 @@ public class OperatorController {
     }
 
 
-    public void notifyListener(){
-        if( m_listener == null ){
-            return;
-        }
-
-        m_listener.setOperators(m_operators);
-        m_listener.setSteps(m_steps);
-    }
-
-
-    /**
-     * Fiil provided string array list from response string values
-     * @param response List under JSON format
-     * @param a_operators Output list of operators
-     * @param a_steps Output list of steps
-     */
-    protected void responseToLists(String response, ArrayList<String> a_operators, ArrayList<String> a_steps){
-        a_operators.clear();
-        a_steps.clear();
+    protected void responseToLists(String response, ArrayList<Patient> a_patients){
+        a_patients.clear();
 
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -82,17 +65,23 @@ public class OperatorController {
             for (int i = 0; i < result.length(); i++){
                 JSONObject obj = result.getJSONObject(i);
 
-                String l_type = obj.getString(DBScripts.KEY_CARD_TYPE);
-                if( l_type.compareTo("Operateur") == 0 ) {
-                    a_operators.add(obj.getString(DBScripts.KEY_CARD_NAME));
-                }
-                else if( l_type.compareTo("Etape") == 0 ){
-                    a_steps.add(obj.getString(DBScripts.KEY_CARD_NAME));
-                }
+                /*String l_folder = obj.getString(DBScripts.KEY_PATIENT_FOLDER);
+                String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
+                String l_firstname = obj.getString(DBScripts.KEY_PATIENT_FIRSTNAME);
+                String l_step = obj.getString(DBScripts.KEY_PATIENT_STEP);
+                String l_date = obj.getString(DBScripts.KEY_PATIENT_DATE);*/
+
+                //Patient l_patient = new Patient( l_folder, l_name, l_firstname, l_step, l_date );
+                Patient l_patient = new Patient("", "", "", "", "");
+                a_patients.add( l_patient );
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void notifyListener(){
+        m_listener.setPatients( m_patients );
     }
 
 }

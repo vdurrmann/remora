@@ -14,6 +14,7 @@ public class DBScripts {
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
+    private static final String PHP_SELECT_PATIENT = "db_rfid_Select_patient.php";
     private static final String PHP_INSERT_OPERATOR = "db_rfid_insert_operator.php";
 
     // JSON type found in response
@@ -81,6 +82,11 @@ public class DBScripts {
     String createFindPatientURL( String a_folder ){
         String l_url = _addDBConnectionData( PHP_FIND_PATIENT );
         l_url += "&folder=" + a_folder;
+        return l_url;
+    }
+
+    public String createSelectPatientURL(){
+        String l_url = _addDBConnectionData( PHP_SELECT_PATIENT );
         return l_url;
     }
 

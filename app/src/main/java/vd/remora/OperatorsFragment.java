@@ -77,7 +77,10 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
             }
         });
 
-        m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
+        m_loading = ProgressDialog.show( getActivity(),
+                getString(R.string.load_wait),
+                getString(R.string.load_load_data),
+                false, false );
 
         return view;
     }

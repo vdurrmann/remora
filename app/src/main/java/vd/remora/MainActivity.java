@@ -1,9 +1,7 @@
 package vd.remora;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -13,24 +11,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import java.util.ArrayList;
 
 import vd.remora.Operator.OperatorController;
-import vd.remora.Operator.OperatorErrorListener;
 import vd.remora.Operator.OperatorListenerInterface;
+import vd.remora.Patient.PatientController;
+import vd.remora.Patient.PatientListenerInterface;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        OperatorErrorListener{
+        DataBaseErrorListener {
 
     //Data
     protected OperatorController m_operator_controller;
+    protected PatientController m_patient_controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +33,9 @@ public class MainActivity extends AppCompatActivity
         // Get data from database
         m_operator_controller = new OperatorController();
         m_operator_controller.setErrorListener( this );
-        fetchInDB();
+
+        m_patient_controller = new PatientController();
+        m_patient_controller.setErrorListener( this );
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,7 +79,15 @@ public class MainActivity extends AppCompatActivity
             m_operator_controller.setListener( (OperatorListenerInterface)newFragment );
             m_operator_controller.fetchOnDB( getApplicationContext() );
 
-        } else if( id == R.id.nav_settings ){
+        }
+        else if (id == R.id.nav_patients) {
+            l_title = getString( R.string.nav_patients );
+            newFragment = new PatientFragment();
+
+            m_patient_controller.setListener( (PatientListenerInterface)newFragment );
+            m_patient_controller.fetchOnDB( getApplicationContext() );
+        }
+        else if( id == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
             startActivity( l_intent );
         }
@@ -110,10 +113,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void fetchInDB(){
-        m_operator_controller.fetchOnDB( getApplicationContext() );
     }
 
     @Override
