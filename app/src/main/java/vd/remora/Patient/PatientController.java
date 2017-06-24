@@ -65,14 +65,13 @@ public class PatientController {
             for (int i = 0; i < result.length(); i++){
                 JSONObject obj = result.getJSONObject(i);
 
-                /*String l_folder = obj.getString(DBScripts.KEY_PATIENT_FOLDER);
+                String l_folder = obj.getString(DBScripts.KEY_PATIENT_FOLDER);
                 String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
                 String l_firstname = obj.getString(DBScripts.KEY_PATIENT_FIRSTNAME);
                 String l_step = obj.getString(DBScripts.KEY_PATIENT_STEP);
-                String l_date = obj.getString(DBScripts.KEY_PATIENT_DATE);*/
+                String l_date = obj.getString(DBScripts.KEY_PATIENT_DATE);
 
-                //Patient l_patient = new Patient( l_folder, l_name, l_firstname, l_step, l_date );
-                Patient l_patient = new Patient("", "", "", "", "");
+                Patient l_patient = new Patient( l_folder, l_name, l_firstname, l_step, l_date );
                 a_patients.add( l_patient );
             }
         } catch (JSONException e) {

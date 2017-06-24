@@ -158,7 +158,7 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
                         JSONObject obj = result.getJSONObject(i);
 
                         String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
-                        String l_surname = obj.getString(DBScripts.KEY_PATIENT_SURNAME);
+                        String l_surname = obj.getString(DBScripts.KEY_PATIENT_FIRSTNAME);
                         l_patient_name = l_name + " " + l_surname;
                         l_is_valid = true;
                     }

@@ -22,7 +22,10 @@ public class DBScripts {
     public static final String KEY_CARD_TYPE = "type";
     public static final String KEY_CARD_NAME = "name";
     public static final String KEY_PATIENT_NAME = "name";
-    public static final String KEY_PATIENT_SURNAME = "surname";
+    public static final String KEY_PATIENT_FIRSTNAME = "surname";
+    public static final String KEY_PATIENT_FOLDER = "folder";
+    public static final String KEY_PATIENT_STEP = "step";
+    public static final String KEY_PATIENT_DATE = "date";
 
 
     private String m_server;

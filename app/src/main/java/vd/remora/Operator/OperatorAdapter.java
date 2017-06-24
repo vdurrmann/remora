@@ -39,7 +39,7 @@ public class OperatorAdapter extends ArrayAdapter<Operator> {
             convertView.setTag(viewHolder);
         }
 
-        //getItem(position) va récupérer l'item [position] de la List<Tweet> tweets
+        //getItem(position) va récupérer l'item [position] de la List<Operator>
         Operator operator = getItem(position);
 
         //il ne reste plus qu'à remplir notre vue

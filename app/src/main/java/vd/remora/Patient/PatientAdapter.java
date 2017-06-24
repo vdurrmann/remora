@@ -36,7 +36,7 @@ public class PatientAdapter extends ArrayAdapter<Patient> {
             convertView.setTag(viewHolder);
         }
 
-        //getItem(position) va récupérer l'item [position] de la List<Tweet> tweets
+        //getItem(position) va récupérer l'item [position] de la List<Patient>
         Patient l_patient = getItem(position);
 
         //il ne reste plus qu'à remplir notre vue
