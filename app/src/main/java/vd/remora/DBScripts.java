@@ -90,7 +90,7 @@ public class DBScripts {
         return l_url;
     }
 
-    String createFindPatientURL( String a_folder ){
+    public String findPatientURL(String a_folder){
         String l_url = _addDBConnectionData( PHP_FIND_PATIENT );
         l_url += "&folder=" + a_folder;
         return l_url;

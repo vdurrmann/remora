@@ -62,4 +62,22 @@ public class Patient {
     }
 
 
+    static String formatFolder( String a_folder ){
+        try{
+            Integer.parseInt(a_folder);//test it is an integer
+            int length = a_folder.length();
+            switch(length){
+                case 1 : a_folder = "000"+a_folder;
+                    break;
+                case 2 : a_folder = "00"+a_folder;
+                    break;
+                case 3 : a_folder = "0"+a_folder;
+                    break;
+                default :break;
+            }
+        }
+        catch(NumberFormatException e){}
+        return a_folder;
+    }
+
 }

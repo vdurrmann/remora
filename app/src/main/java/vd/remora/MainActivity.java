@@ -12,26 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import vd.remora.Operator.OperatorController;
-import vd.remora.Operator.OperatorListenerInterface;
-import vd.remora.Patient.PatientController;
-import vd.remora.Patient.PatientListenerInterface;
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        DataBaseErrorListener {
-
-    //Data
-    protected PatientController m_patient_controller;
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_main );
-
-        // Get data from database
-        m_patient_controller = new PatientController();
-        m_patient_controller.setErrorListener( this );
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,9 +59,6 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_patients) {
             l_title = getString( R.string.nav_patients );
             newFragment = new PatientFragment();
-
-            m_patient_controller.setListener( (PatientListenerInterface)newFragment );
-            m_patient_controller.fetchOnDB( getApplicationContext() );
         }
         else if( id == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
@@ -104,10 +88,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onError(String response) {
-        Intent l_intent = new Intent( this, PreferenceActivity.class );
-        startActivity( l_intent );
-        this.finish();
-    }
 }

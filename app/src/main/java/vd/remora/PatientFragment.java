@@ -1,7 +1,9 @@
 package vd.remora;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +15,25 @@ import java.util.List;
 
 import vd.remora.Patient.Patient;
 import vd.remora.Patient.PatientAdapter;
+import vd.remora.Patient.PatientController;
 import vd.remora.Patient.PatientListenerInterface;
 
-public class PatientFragment extends Fragment implements PatientListenerInterface{
+public class PatientFragment extends Fragment
+        implements PatientListenerInterface, DataBaseErrorListener{
 
     ProgressDialog m_loading;
     ListView m_list_view;
 
+    private PatientController m_patient_controller = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_patients, container, false);
+
+        // Controller
+        m_patient_controller = new PatientController();
+        m_patient_controller.setListener( this );
+        m_patient_controller.setErrorListener( this );
 
         // Fill operator list
         m_list_view = (ListView) view.findViewById(R.id.list_patients);
@@ -38,6 +49,8 @@ public class PatientFragment extends Fragment implements PatientListenerInterfac
                 getString(R.string.load_load_patients),
                 false, false );
 
+        m_patient_controller.fetchOnDB( getContext() );
+
         return view;
     }
 
@@ -49,5 +62,17 @@ public class PatientFragment extends Fragment implements PatientListenerInterfac
         l_adapter.notifyDataSetChanged();
 
         m_loading.dismiss();
+    }
+
+    @Override
+    public void onPatientFound(String a_patient_name) {}
+
+    @Override
+    public void onError(String response) {
+        Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
+
+        Intent l_intent = new Intent( getActivity(), PreferenceActivity.class );
+        startActivity( l_intent );
+        this.getActivity().finish();
     }
 }

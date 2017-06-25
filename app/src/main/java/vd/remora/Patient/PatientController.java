@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import vd.remora.DBScripts;
 import vd.remora.DataBaseErrorListener;
+import vd.remora.R;
 
 
 public class PatientController {
@@ -38,15 +39,53 @@ public class PatientController {
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                responseToLists(response, m_patients);
-                notifyListener();
+                _responseToLists(response, m_patients);
+                _notifyListener();
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String err = error.toString();
-                        m_error_listener.onError( error.toString() );
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
+    public void findPatient( final Context a_context, String a_folder ){
+        String l_formatted_folder = Patient.formatFolder(a_folder);
+
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.findPatientURL( l_formatted_folder );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray result = jsonObject.getJSONArray(DBScripts.JSON_ARRAY);
+
+                    // Update patient name
+                    String l_patient_name = "";
+                    for (int i = 0; i < result.length(); i++){
+                        JSONObject obj = result.getJSONObject(i);
+
+                        String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
+                        String l_surname = obj.getString(DBScripts.KEY_PATIENT_FIRSTNAME);
+                        l_patient_name = l_name + " " + l_surname;
+                    }
+                    m_listener.onPatientFound( l_patient_name );
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.getMessage() );
                     }
                 });
 
@@ -55,7 +94,7 @@ public class PatientController {
     }
 
 
-    protected void responseToLists(String response, ArrayList<Patient> a_patients){
+    private void _responseToLists(String response, ArrayList<Patient> a_patients){
         a_patients.clear();
 
         try {
@@ -79,8 +118,10 @@ public class PatientController {
         }
     }
 
-    protected void notifyListener(){
+    private void _notifyListener(){
         m_listener.setPatients( m_patients );
     }
+
+    private void _notifyErrorListener( String a_error ){ m_error_listener.onError(a_error); }
 
 }

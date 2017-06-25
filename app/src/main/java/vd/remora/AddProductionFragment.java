@@ -1,6 +1,5 @@
 package vd.remora;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +9,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -20,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,19 +23,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
+import vd.remora.Operator.OperatorController;
 import vd.remora.Operator.OperatorListenerInterface;
+import vd.remora.Patient.Patient;
+import vd.remora.Patient.PatientController;
+import vd.remora.Patient.PatientListenerInterface;
 
-/**
- * Created by Vincent-LDLC on 07/06/2017.
- */
-
-public class AddProductionFragment extends Fragment implements OperatorListenerInterface{
+public class AddProductionFragment extends Fragment
+        implements OperatorListenerInterface, PatientListenerInterface, DataBaseErrorListener{
 
     private ProgressDialog m_loading;
     // Widgets
@@ -50,10 +42,24 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
     EditText m_txt_folder;
     TextView m_txt_patient;
 
+    //Data
+    private PatientController m_patient_controller = null;
+    private OperatorController m_operator_controller = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_prod, container, false);
 
+        // Controllers
+        m_patient_controller = new PatientController();
+        m_patient_controller.setListener( this );
+        m_patient_controller.setErrorListener( this );
+
+        m_operator_controller = new OperatorController();
+        m_operator_controller.setListener( this );
+        m_operator_controller.setErrorListener( this );
+
+        // UI
         m_spinner_operator = (Spinner) view.findViewById( R.id.spinner_operator);
         m_spinner_steps = (Spinner) view.findViewById( R.id.spinner_step );
 
@@ -71,10 +77,9 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
         });
 
         // Fill UI
-        /*MainActivity l_activity = (MainActivity)getActivity();
-        this.updateList( l_activity.getOperators(), m_spinner_operator );
-        this.updateList( l_activity.getSteps(), m_spinner_steps );*/
         m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
+
+        m_operator_controller.fetchOnDB( getContext() );
 
         return view;
     }
@@ -87,7 +92,7 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
         a_spinner.setAdapter(adapter);
     }
 
-    protected void setValidateEnable( boolean a_enable ){
+    private void _setValidateEnable( boolean a_enable ){
         m_btn_validate.setEnabled(a_enable);
     }
 
@@ -102,11 +107,10 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
         @Override
         public void afterTextChanged(Editable s) {
             if( s.toString().length() > 0 ) {
-                findPatientName();
+                m_patient_controller.findPatient( getContext(), m_txt_folder.getText().toString() );
             }
             else{
-                updatePatientName( "" );
-                setValidateEnable(false);
+                onPatientFound("");
             }
         }
     };
@@ -136,72 +140,8 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
         requestQueue.add(stringRequest);
     }
 
-    /**
-     * Query database to find patient name from input folder
-     */
-    protected void findPatientName(){
-        String l_folder = formatFolder( m_txt_folder.getText().toString() );
-
-        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(getContext()) );
-        String url = l_DBScripts.createFindPatientURL( l_folder );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray result = jsonObject.getJSONArray(DBScripts.JSON_ARRAY);
-
-                    // Update patient name
-                    String l_patient_name = getResources().getString(R.string.no_patient);
-                    boolean l_is_valid = false;
-                    for (int i = 0; i < result.length(); i++){
-                        JSONObject obj = result.getJSONObject(i);
-
-                        String l_name = obj.getString(DBScripts.KEY_PATIENT_NAME);
-                        String l_surname = obj.getString(DBScripts.KEY_PATIENT_FIRSTNAME);
-                        l_patient_name = l_name + " " + l_surname;
-                        l_is_valid = true;
-                    }
-
-                    updatePatientName( l_patient_name );
-                    setValidateEnable( l_is_valid );
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        updatePatientName( "An error occured" );
-                    }
-                });
-
-        RequestQueue requestQueue = Volley.newRequestQueue( getActivity().getApplicationContext() );
-        requestQueue.add(stringRequest);
-    }
-
-    void updatePatientName( String a_name ){
+    private void _updatePatientName( String a_name ){
         m_txt_patient.setText( a_name );
-    }
-
-    String formatFolder( String a_folder ){
-        try{
-            Integer.parseInt(a_folder);//test it is an integer
-            int length = a_folder.length();
-            switch(length){
-                case 1 : a_folder = "000"+a_folder;
-                    break;
-                case 2 : a_folder = "00"+a_folder;
-                    break;
-                case 3 : a_folder = "0"+a_folder;
-                    break;
-                default :break;
-            }
-        }
-        catch(NumberFormatException e){}
-        return a_folder;
     }
 
     @Override
@@ -220,4 +160,23 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
         this.updateList( a_steps, m_spinner_steps );
         m_loading.dismiss();
     }
+
+    @Override
+    public void setPatients(ArrayList<Patient> a_patients) {}
+
+    @Override
+    public void onPatientFound(String a_patient_name) {
+        this._updatePatientName( a_patient_name );
+        this._setValidateEnable( a_patient_name.compareTo("") != 0 );
+    }
+
+    @Override
+    public void onError(String response) {
+        Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
+
+        Intent l_intent = new Intent( getActivity(), PreferenceActivity.class );
+        startActivity( l_intent );
+        this.getActivity().finish();
+    }
+
 }
