@@ -8,4 +8,6 @@ public interface ProductionStepListenerInterface {
 
     void onStepCreated( boolean l_ok );
 
+    void onStepDeleted( boolean l_ok );
+
 }

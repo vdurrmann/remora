@@ -65,7 +65,6 @@ public class OperatorAdapter extends ArrayAdapter<Operator> {
     }
 
     private class DeleteClickListener implements View.OnClickListener {
-
         private String m_name;
 
         private DeleteClickListener( String a_name ){
@@ -99,7 +98,6 @@ public class OperatorAdapter extends ArrayAdapter<Operator> {
 
             builder.show();
         }
-
     }
 
 }

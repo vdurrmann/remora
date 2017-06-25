@@ -33,6 +33,7 @@
     // Production step fragment
     <string name="step_delete_title">Supprimer une étape</string>
     <string name="step_delete_insctr">Voulez-vous supprimer l\'étape %1$s ?</string>
+    <string name="step_deleted_ok">Etape supprimée</string>
     <string name="step_add_title">Ajouter une étape</string>
     <string name="step_created_ok">Etape créée</string>
 

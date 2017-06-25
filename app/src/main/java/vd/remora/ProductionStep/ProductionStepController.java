@@ -77,6 +77,29 @@ public class ProductionStepController {
         requestQueue.add(stringRequest);
     }
 
+    public void deleteStep( final Context a_context, String a_step_name ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.deleteStepURL( a_step_name );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean l_ok = response.compareTo( "1" ) == 0;
+                if( l_ok ) {
+                    fetchOnDB( a_context );
+                }
+                m_listener.onStepDeleted( l_ok );
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
 
     private void _allStepsResponseToList(String response, ArrayList<String> a_steps){
         a_steps.clear();

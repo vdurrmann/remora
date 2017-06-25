@@ -12,12 +12,14 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import vd.remora.Operator.OperatorAdapter;
 import vd.remora.ProductionStep.ProductionStepListenerInterface;
 import vd.remora.ProductionStep.ProductionStep;
 import vd.remora.ProductionStep.ProductionStepAdapter;
@@ -45,8 +47,17 @@ public class ProductionStepFragment extends Fragment
         m_list_view.clearChoices();
 
         List<ProductionStep> l_steps = new ArrayList<>();
-        ProductionStepAdapter l_adapter = new ProductionStepAdapter( getContext(), l_steps );
+        ProductionStepAdapter l_adapter = new ProductionStepAdapter( getContext(), l_steps, m_steps_controller );
         m_list_view.setAdapter( l_adapter );
+
+        m_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ProductionStepAdapter l_adapter = (ProductionStepAdapter) m_list_view.getAdapter();
+                l_adapter.setSelectedItem( position );
+                l_adapter.notifyDataSetChanged();
+            }
+        });
 
         //
         FloatingActionButton l_btn = (FloatingActionButton)view.findViewById( R.id.btn_add_step );
@@ -109,6 +120,15 @@ public class ProductionStepFragment extends Fragment
             return;
         }
         String l_txt = l_ok ? getString(R.string.step_created_ok) : getString(R.string.an_error_occured);
+        Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
+    }
+
+    @Override
+    public void onStepDeleted(boolean l_ok) {
+        if( getView() == null ){
+            return;
+        }
+        String l_txt = l_ok ? getString(R.string.step_deleted_ok) : getString(R.string.an_error_occured);
         Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
     }
 

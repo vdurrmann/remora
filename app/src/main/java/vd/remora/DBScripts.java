@@ -21,6 +21,7 @@ public class DBScripts {
 
     private static final String PHP_ALL_STEPS = "db_rfid_all_steps.php";
     private static final String PHP_INSERT_STEPS = "db_rfid_insert_steps.php";
+    private static final String PHP_DELETE_STEPS = "db_rfid_delete_steps.php";
 
     // JSON type found in response
     public static final String JSON_ARRAY = "result";
@@ -101,6 +102,12 @@ public class DBScripts {
 
     public String insertStepURL( String a_step_name ){
         String l_url = _addDBConnectionData( PHP_INSERT_STEPS );
+        l_url += "&name=" + a_step_name;
+        return l_url;
+    }
+
+    public String deleteStepURL( String a_step_name ){
+        String l_url = _addDBConnectionData( PHP_DELETE_STEPS );
         l_url += "&name=" + a_step_name;
         return l_url;
     }

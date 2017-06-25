@@ -152,6 +152,8 @@ public class AddProductionFragment extends Fragment
 
     @Override
     public void onStepCreated(boolean l_ok) {}
+    @Override
+    public void onStepDeleted(boolean l_ok) {}
 
     @Override
     public void setPatients(ArrayList<Patient> a_patients) {}
