@@ -45,6 +45,7 @@
     <string name="delete">Supprimer</string>
     <string name="an_error_occured">Un problème est survenu</string>
     <string name="add">Ajouter</string>
+    <string name="test">Tester</string>
 
     //Preferences
     <string name="pref_server">Serveur</string>
@@ -56,6 +57,8 @@
     <string name="pref_password_sumary">Mot de passe pour se connecter à la base de donnée</string>
     <string name="pref_database">Base de donnée</string>
     <string name="pref_database_sumary">Nom de la base de donnée</string>
+    <string name="pref_test_ok">La connection à la base de donnée est établie</string>
+    <string name="pref_test_nok">Impossible de se connecter à la base de donnée</string>
 
     <string name="pref_error">Impossible de mettre à jour les données. Veuillez vérifier les préférences.</string>
 

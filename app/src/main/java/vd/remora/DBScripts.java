@@ -11,6 +11,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class DBScripts {
 
+    private static final String PHP_TEST_CONNECTION = "db_test_connect.php";
+
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
@@ -45,6 +47,10 @@ public class DBScripts {
         m_username = a_preferences.getString( "pref_username", "" );
         m_password = a_preferences.getString( "pref_password", "" );
         m_database = a_preferences.getString( "pref_database", "" );
+    }
+
+    public String testDBConnection(){
+        return _addDBConnectionData( PHP_TEST_CONNECTION );
     }
 
     /**

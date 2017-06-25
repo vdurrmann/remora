@@ -5,9 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 public class PreferenceActivity extends Activity {
 
@@ -32,6 +40,15 @@ public class PreferenceActivity extends Activity {
             public void onClick(View v) {
                 savePreferences();
                 switchToMainActivity();
+            }
+        });
+
+        Button l_btn_test = (Button)findViewById(R.id.pref_btn_test);
+        l_btn_test.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                savePreferences();
+                _testConnection();
             }
         });
     }
@@ -68,6 +85,28 @@ public class PreferenceActivity extends Activity {
         m_txt_server.setText( l_preferences.getString( "pref_server", "") );
         m_txt_username.setText( l_preferences.getString( "pref_username", "") );
         m_txt_password.setText( l_preferences.getString( "pref_password", "") );
+    }
+
+    protected void _testConnection(){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(getApplicationContext()) );
+        String url = l_DBScripts.testDBConnection();
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean l_ok = response.compareTo( "1" ) == 0;
+                String l_txt = getString( l_ok ? R.string.pref_test_ok : R.string.pref_test_nok);
+                Toast.makeText( getApplicationContext(), l_txt, Toast.LENGTH_LONG ).show();
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText( getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG ).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( getApplicationContext() );
+        requestQueue.add(stringRequest);
     }
 
 }

@@ -60,13 +60,30 @@
 
     </GridLayout>
 
-    <Button
-        android:id="@+id/btn_save"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:gravity="center"
+        android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_margin="16dp"/>
+        android:weightSum="100">
+
+        <Button
+            android:id="@+id/pref_btn_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test"
+            android:layout_weight="50"
+            android:layout_margin="16dp"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:layout_weight="50"
+            android:layout_margin="16dp"/>
+
+        </LinearLayout>
 
 </LinearLayout>
