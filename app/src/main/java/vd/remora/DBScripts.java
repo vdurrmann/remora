@@ -57,7 +57,7 @@ public class DBScripts {
      * @param a_folder Patient folder
      * @return URL
      */
-    String createInsertProdURL(String a_operator, String a_step, String a_folder){
+    public String insertProductionURL(String a_operator, String a_step, String a_folder){
         // Get now data
         GregorianCalendar l_now = new GregorianCalendar();
         java.text.SimpleDateFormat l_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

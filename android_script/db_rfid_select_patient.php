@@ -5,7 +5,7 @@
  require_once('db_connect.php');
  
  # Select all cards
- $sql = "SELECT * FROM patient WHERE production_state!='Retour Archives'";
+ $sql = "SELECT * FROM patient WHERE production_state!='Retour Archives' ORDER BY production_state, date_delivery";
  $r = mysqli_query($con,$sql);
  
  # Keep name and type

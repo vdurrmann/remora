@@ -3,6 +3,7 @@ package vd.remora.Patient;
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -80,6 +81,26 @@ public class PatientController {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.getMessage() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
+    public void updatePatientProductionStep( Context a_context, String a_folder, String a_operator, String a_production_step ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.insertProductionURL( a_operator, a_production_step, a_folder );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                m_listener.onProductionStepUpdated( response.compareTo("1") == 0 );
             }
         },
                 new Response.ErrorListener() {

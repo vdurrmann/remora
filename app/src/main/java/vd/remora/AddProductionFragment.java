@@ -72,7 +72,16 @@ public class AddProductionFragment extends Fragment
         m_btn_validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertProduction();
+                String l_operator = m_spinner_operator.getSelectedItem().toString();
+                String l_step = m_spinner_steps.getSelectedItem().toString();
+                String l_folder = m_txt_folder.getText().toString();
+
+                m_patient_controller.updatePatientProductionStep(
+                        getContext(),
+                        l_folder,
+                        l_operator,
+                        l_step
+                );
             }
         });
 
@@ -115,31 +124,6 @@ public class AddProductionFragment extends Fragment
         }
     };
 
-    protected void insertProduction(){
-        String l_operator = m_spinner_operator.getSelectedItem().toString();
-        String l_step = m_spinner_steps.getSelectedItem().toString();
-        String l_folder = m_txt_folder.getText().toString();
-
-        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(getContext()) );
-        String url = l_DBScripts.createInsertProdURL( l_operator, l_step, l_folder );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                String l_txt = response.compareTo("1") == 0 ? "Etape validée" : "Un problème est survenu";
-                Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Snackbar.make( getView(), error.getMessage().toString(), Snackbar.LENGTH_LONG ).show();
-                    }
-                });
-
-        RequestQueue requestQueue = Volley.newRequestQueue( getActivity() );
-        requestQueue.add(stringRequest);
-    }
-
     private void _updatePatientName( String a_name ){
         m_txt_patient.setText( a_name );
     }
@@ -168,6 +152,12 @@ public class AddProductionFragment extends Fragment
     public void onPatientFound(String a_patient_name) {
         this._updatePatientName( a_patient_name );
         this._setValidateEnable( a_patient_name.compareTo("") != 0 );
+    }
+
+    @Override
+    public void onProductionStepUpdated( boolean a_ok ){
+        String l_txt = a_ok ? getString(R.string.prod_updated_ok) : getString(R.string.an_error_occured);
+        Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
     }
 
     @Override

@@ -9,15 +9,30 @@
  $FOLDER = $_GET["folder"];
  $OPERATOR = $_GET["operator"];
  
- # Select all cards
+ $ok = TRUE;
+ # Add production to history
  $sql = "INSERT INTO history VALUES ( '$DATE', '$STEP', '$FOLDER', '$OPERATOR' )";
  if ($con->query($sql) === TRUE) {
-    echo "1";
-} else {
-	echo "0";
-    #echo "Error: " . $sql . "<br>" . $con->error;
-}
+    $ok = TRUE;
+ } else {
+	$ok = FALSE;
+ }
 
+ # Update Patient step
+ $sql = "UPDATE patient SET production_state='$STEP' WHERE folder='$FOLDER'";
+ if ($con->query($sql) === TRUE) {
+	 $ok = $ok AND TRUE;
+ }else{
+	 $ok = $ok AND FALSE;
+ }
+
+ # Send result
+ if( $ok ){
+	echo ( "1" );
+ }else{
+	echo ( "0" );
+ }
+ 
  mysqli_close($con);
  
  }

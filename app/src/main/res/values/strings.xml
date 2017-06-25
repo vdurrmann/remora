@@ -22,6 +22,7 @@
     <string name="patient">Patient : </string>
     <string name="folder">Dossier</string>
     <string name="no_patient">Pas de patient à ce numéro</string>
+    <string name="prod_updated_ok">Etape validée</string>
 
     // Operator fragment
     <string name="ope_delete_title">Supprimer un opérateur</string>
@@ -33,6 +34,7 @@
     <string name="cancel">Annuler</string>
     <string name="save">Sauver</string>
     <string name="delete">Supprimer</string>
+    <string name="an_error_occured">Un problème est survenu</string>
 
     //Preferences
     <string name="pref_server">Serveur</string>

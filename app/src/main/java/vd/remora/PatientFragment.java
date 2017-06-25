@@ -68,6 +68,9 @@ public class PatientFragment extends Fragment
     public void onPatientFound(String a_patient_name) {}
 
     @Override
+    public void onProductionStepUpdated( boolean a_ok ){}
+
+    @Override
     public void onError(String response) {
         Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
 

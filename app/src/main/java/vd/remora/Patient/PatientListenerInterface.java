@@ -11,4 +11,6 @@ public interface PatientListenerInterface {
      * @param a_patient_name Patient's name. "" if not found
      */
     void onPatientFound( String a_patient_name );
+
+    void onProductionStepUpdated( boolean l_ok );
 }
