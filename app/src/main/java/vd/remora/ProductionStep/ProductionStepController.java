@@ -1,9 +1,7 @@
-package vd.remora.Operator;
+package vd.remora.ProductionStep;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,13 +18,13 @@ import java.util.ArrayList;
 import vd.remora.DBScripts;
 import vd.remora.DataBaseErrorListener;
 
-public class OperatorController {
+public class ProductionStepController {
 
-    private OperatorListenerInterface m_listener = null;
+    private ProductionStepListenerInterface m_listener = null;
     private DataBaseErrorListener m_error_listener = null;
-    private ArrayList<String> m_operators = new ArrayList<>();
+    private ArrayList<String> m_steps = new ArrayList<>();
 
-    public void setListener( OperatorListenerInterface a_listener ){
+    public void setListener( ProductionStepListenerInterface a_listener ){
         m_listener = a_listener;
     }
 
@@ -36,12 +34,12 @@ public class OperatorController {
 
     public void fetchOnDB( Context a_context ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.createAllCardsURL();
+        String url = l_DBScripts.allStepsURL();
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                responseToLists(response, m_operators);
-                _notifyListener();
+                _allStepsResponseToList( response, m_steps );
+                m_listener.setSteps( m_steps );
             }
         },
                 new Response.ErrorListener() {
@@ -55,9 +53,9 @@ public class OperatorController {
         requestQueue.add(stringRequest);
     }
 
-    public void insertOperator(final Context a_context, String a_name ){
+    public void insertStep( final Context a_context, String a_step_name ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.createInsertOperatorURL( a_name );
+        String url = l_DBScripts.insertStepURL( a_step_name );
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -65,31 +63,7 @@ public class OperatorController {
                 if( l_ok ) {
                     fetchOnDB( a_context );
                 }
-                m_listener.onOperatorCreated( l_ok );
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        _notifyErrorListener( error.toString() );
-                    }
-                });
-
-        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
-        requestQueue.add(stringRequest);
-    }
-
-    public void deleteOperator( final Context a_context, String a_operator ){
-        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.deleteOperatorURL( a_operator );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                boolean l_ok = response.compareTo( "1" ) == 0;
-                if( l_ok ) {
-                    fetchOnDB( a_context );
-                }
-                m_listener.onOperatorCreated( l_ok );
+                m_listener.onStepCreated( l_ok );
             }
         },
                 new Response.ErrorListener() {
@@ -104,25 +78,8 @@ public class OperatorController {
     }
 
 
-    private void _notifyListener(){
-        if( m_listener == null ){
-            return;
-        }
-        m_listener.setOperators(m_operators);
-    }
-
-    private void _notifyErrorListener( String a_error ){
-        m_error_listener.onError( a_error );
-    }
-
-
-    /**
-     * Fiil provided string array list from response string values
-     * @param response List under JSON format
-     * @param a_operators Output list of operators
-     */
-    private void responseToLists(String response, ArrayList<String> a_operators){
-        a_operators.clear();
+    private void _allStepsResponseToList(String response, ArrayList<String> a_steps){
+        a_steps.clear();
 
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -130,15 +87,15 @@ public class OperatorController {
 
             for (int i = 0; i < result.length(); i++){
                 JSONObject obj = result.getJSONObject(i);
-
-                String l_type = obj.getString(DBScripts.KEY_CARD_TYPE);
-                if( l_type.compareTo("Operateur") == 0 ) {
-                    a_operators.add(obj.getString(DBScripts.KEY_CARD_NAME));
-                }
+                a_steps.add(obj.getString(DBScripts.KEY_STEP_NAME));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void _notifyErrorListener( String a_error ){
+        m_error_listener.onError(a_error);
     }
 
 }

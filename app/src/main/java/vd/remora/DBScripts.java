@@ -19,6 +19,9 @@ public class DBScripts {
     private static final String PHP_INSERT_OPERATOR = "db_rfid_insert_operator.php";
     private static final String PHP_DELETE_OPERATOR = "db_rfid_delete_operator.php";
 
+    private static final String PHP_ALL_STEPS = "db_rfid_all_steps.php";
+    private static final String PHP_INSERT_STEPS = "db_rfid_insert_steps.php";
+
     // JSON type found in response
     public static final String JSON_ARRAY = "result";
     public static final String KEY_CARD_TYPE = "type";
@@ -28,6 +31,7 @@ public class DBScripts {
     public static final String KEY_PATIENT_FOLDER = "folder";
     public static final String KEY_PATIENT_STEP = "step";
     public static final String KEY_PATIENT_DATE = "date";
+    public static final String KEY_STEP_NAME = "name";
 
 
     private String m_server;
@@ -89,6 +93,19 @@ public class DBScripts {
         l_url += "&name=" + a_operator;
         return l_url;
     }
+
+    public String allStepsURL(){
+        String l_url = _addDBConnectionData( PHP_ALL_STEPS );
+        return l_url;
+    }
+
+    public String insertStepURL( String a_step_name ){
+        String l_url = _addDBConnectionData( PHP_INSERT_STEPS );
+        l_url += "&name=" + a_step_name;
+        return l_url;
+    }
+
+
 
     public String findPatientURL(String a_folder){
         String l_url = _addDBConnectionData( PHP_FIND_PATIENT );

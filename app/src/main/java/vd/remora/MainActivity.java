@@ -56,6 +56,10 @@ public class MainActivity extends AppCompatActivity
             l_title = getString( R.string.nav_operators );
             newFragment = new OperatorsFragment();
         }
+        else if( id == R.id.nav_prod_steps ){
+            l_title = "<ProdSteps";
+            newFragment = new ProductionStepFragment();
+        }
         else if (id == R.id.nav_patients) {
             l_title = getString( R.string.nav_patients );
             newFragment = new PatientFragment();

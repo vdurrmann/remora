@@ -3,7 +3,6 @@ package vd.remora;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -17,22 +16,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 import java.util.ArrayList;
 
 import vd.remora.Operator.OperatorController;
 import vd.remora.Operator.OperatorListenerInterface;
+import vd.remora.ProductionStep.ProductionStepListenerInterface;
 import vd.remora.Patient.Patient;
 import vd.remora.Patient.PatientController;
 import vd.remora.Patient.PatientListenerInterface;
+import vd.remora.ProductionStep.ProductionStepController;
 
 public class AddProductionFragment extends Fragment
-        implements OperatorListenerInterface, PatientListenerInterface, DataBaseErrorListener{
+        implements OperatorListenerInterface,
+        PatientListenerInterface,
+        ProductionStepListenerInterface,
+        DataBaseErrorListener
+{
 
     private ProgressDialog m_loading;
     // Widgets
@@ -45,6 +44,7 @@ public class AddProductionFragment extends Fragment
     //Data
     private PatientController m_patient_controller = null;
     private OperatorController m_operator_controller = null;
+    private ProductionStepController m_steps_controller = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +58,10 @@ public class AddProductionFragment extends Fragment
         m_operator_controller = new OperatorController();
         m_operator_controller.setListener( this );
         m_operator_controller.setErrorListener( this );
+
+        m_steps_controller = new ProductionStepController();
+        m_steps_controller.setListener( this );
+        m_steps_controller.setErrorListener( this );
 
         // UI
         m_spinner_operator = (Spinner) view.findViewById( R.id.spinner_operator);
@@ -89,6 +93,7 @@ public class AddProductionFragment extends Fragment
         m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
 
         m_operator_controller.fetchOnDB( getContext() );
+        m_steps_controller.fetchOnDB( getContext() );
 
         return view;
     }
@@ -144,6 +149,9 @@ public class AddProductionFragment extends Fragment
         this.updateList( a_steps, m_spinner_steps );
         m_loading.dismiss();
     }
+
+    @Override
+    public void onStepCreated(boolean l_ok) {}
 
     @Override
     public void setPatients(ArrayList<Patient> a_patients) {}

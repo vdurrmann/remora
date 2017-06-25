@@ -84,7 +84,7 @@ public class OperatorsFragment extends Fragment
 
     void addNewOperator(){
         AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
-        builder.setTitle("Title");
+        builder.setTitle(getString(R.string.ope_add_title));
 
         // Set up the input
         final EditText input = new EditText( getContext() );
@@ -92,13 +92,13 @@ public class OperatorsFragment extends Fragment
         builder.setView(input);
 
         // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_operator_controller.insertOperator( getContext(), input.getText().toString() );
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -143,9 +143,6 @@ public class OperatorsFragment extends Fragment
         String l_txt = a_deleted ? "Operateur supprimé" : "Un problème est survenu";
         Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
     }
-
-    @Override
-    public void setSteps(ArrayList<String> a_steps) {}
 
     @Override
     public void onError(String response) {
