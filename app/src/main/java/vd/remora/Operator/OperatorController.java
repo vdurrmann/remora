@@ -1,7 +1,9 @@
 package vd.remora.Operator;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -40,13 +42,61 @@ public class OperatorController {
             @Override
             public void onResponse(String response) {
                 responseToLists(response, m_operators, m_steps);
-                notifyListener();
+                _notifyListener();
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        m_error_listener.onError( error.toString() );
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
+    public void insertOperator(final Context a_context, String a_name ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.createInsertOperatorURL( a_name );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean l_ok = response.compareTo( "1" ) == 0;
+                if( l_ok ) {
+                    fetchOnDB( a_context );
+                }
+                m_listener.onOperatorCreated( l_ok );
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
+    public void deleteOperator( final Context a_context, String a_operator ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.deleteOperatorURL( a_operator );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                boolean l_ok = response.compareTo( "1" ) == 0;
+                if( l_ok ) {
+                    fetchOnDB( a_context );
+                }
+                m_listener.onOperatorCreated( l_ok );
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
                     }
                 });
 
@@ -55,13 +105,17 @@ public class OperatorController {
     }
 
 
-    public void notifyListener(){
+    private void _notifyListener(){
         if( m_listener == null ){
             return;
         }
 
         m_listener.setOperators(m_operators);
         m_listener.setSteps(m_steps);
+    }
+
+    private void _notifyErrorListener( String a_error ){
+        m_error_listener.onError( a_error );
     }
 
 
@@ -71,7 +125,7 @@ public class OperatorController {
      * @param a_operators Output list of operators
      * @param a_steps Output list of steps
      */
-    protected void responseToLists(String response, ArrayList<String> a_operators, ArrayList<String> a_steps){
+    private void responseToLists(String response, ArrayList<String> a_operators, ArrayList<String> a_steps){
         a_operators.clear();
         a_steps.clear();
 

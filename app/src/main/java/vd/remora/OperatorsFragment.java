@@ -2,10 +2,8 @@ package vd.remora;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,40 +13,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import vd.remora.Operator.Operator;
 import vd.remora.Operator.OperatorAdapter;
+import vd.remora.Operator.OperatorController;
 import vd.remora.Operator.OperatorListenerInterface;
 
 /**
  * Fragment to list Operators
  * Fetch operator list in Bundle under "operators" key
  */
-public class OperatorsFragment extends Fragment implements OperatorListenerInterface {
+public class OperatorsFragment extends Fragment
+        implements OperatorListenerInterface, DataBaseErrorListener {
 
     ListView m_list_view;
     private ProgressDialog m_loading;
+    private OperatorController m_operator_controller = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_operator, container, false);
+
+        // Operator controller
+        m_operator_controller = new OperatorController();
+        m_operator_controller.setErrorListener( this );
+        m_operator_controller.setListener( this );
 
         // Fill operator list
         m_list_view = (ListView) view.findViewById(R.id.list_operators);
@@ -56,7 +50,7 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
         m_list_view.clearChoices();
 
         List<Operator> l_operators = new ArrayList<>();
-        OperatorAdapter l_adapter = new OperatorAdapter( getContext(), l_operators );
+        OperatorAdapter l_adapter = new OperatorAdapter( getContext(), l_operators, m_operator_controller );
         m_list_view.setAdapter( l_adapter );
 
         m_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,6 +76,9 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
                 getString(R.string.load_load_data),
                 false, false );
 
+
+        m_operator_controller.fetchOnDB( getContext() );
+
         return view;
     }
 
@@ -98,7 +95,7 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                insertOperator( input.getText().toString() );
+                m_operator_controller.insertOperator( getContext(), input.getText().toString() );
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -109,42 +106,6 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
         });
 
         builder.show();
-    }
-
-    protected void insertOperator(final String a_name ){
-        SharedPreferences l_pref = PreferenceManager.getDefaultSharedPreferences( getActivity().getApplicationContext() );
-        DBScripts l_DBScripts = new DBScripts( l_pref );
-        String url = l_DBScripts.createInsertOperatorURL( a_name );
-        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                boolean l_ok = response.compareTo( "1" ) == 0;
-
-                if( l_ok ) {
-                    // Add operator to list
-                    addOperatorToList(a_name);
-                }
-                // Notify user
-                String l_txt = l_ok ? "Operateur créée" : "Un problème est survenu";
-                Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Snackbar.make( getView(), error.getMessage().toString(), Snackbar.LENGTH_LONG ).show();
-                    }
-                });
-
-        RequestQueue requestQueue = Volley.newRequestQueue( getActivity() );
-        requestQueue.add(stringRequest);
-    }
-
-    protected void addOperatorToList( String a_operator ){
-        OperatorAdapter l_adapter = (OperatorAdapter) m_list_view.getAdapter();
-        if( l_adapter != null ){
-            l_adapter.add( new Operator(a_operator) );
-        }
     }
 
     protected List<Operator> createOperatorList(ArrayList<String> a_operators_name ){
@@ -166,5 +127,32 @@ public class OperatorsFragment extends Fragment implements OperatorListenerInter
     }
 
     @Override
+    public void onOperatorCreated(boolean a_created) {
+        if( getView() == null ){
+            return;
+        }
+        String l_txt = a_created ? "Operateur créée" : "Un problème est survenu";
+        Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
+    }
+
+    @Override
+    public void onOperatorDeleted(boolean a_deleted){
+        if( getView() == null ){
+            return;
+        }
+        String l_txt = a_deleted ? "Operateur supprimé" : "Un problème est survenu";
+        Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
+    }
+
+    @Override
     public void setSteps(ArrayList<String> a_steps) {}
+
+    @Override
+    public void onError(String response) {
+        Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
+
+        Intent l_intent = new Intent( getActivity(), PreferenceActivity.class );
+        startActivity( l_intent );
+        this.getActivity().finish();
+    }
 }

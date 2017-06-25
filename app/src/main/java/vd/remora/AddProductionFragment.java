@@ -211,6 +211,11 @@ public class AddProductionFragment extends Fragment implements OperatorListenerI
     }
 
     @Override
+    public void onOperatorCreated(boolean a_created) {}
+    @Override
+    public void onOperatorDeleted(boolean a_deleted) {}
+
+    @Override
     public void setSteps(ArrayList<String> a_steps) {
         this.updateList( a_steps, m_spinner_steps );
         m_loading.dismiss();

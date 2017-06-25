@@ -1,7 +1,7 @@
 package vd.remora.Operator;
 
 public class Operator {
-    String m_name;
+    String m_name = "";
 
     public Operator( String a_name ){
         m_name = a_name;

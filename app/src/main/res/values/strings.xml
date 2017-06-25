@@ -23,10 +23,14 @@
     <string name="folder">Dossier</string>
     <string name="no_patient">Pas de patient à ce numéro</string>
 
+    // Operator fragment
+    <string name="ope_delete_title">Supprimer un opérateur</string>
+    <string name="ope_delete_instr">Etes-vous sûr ce vouloir supprimer %1$s ?</string>
+
     // Common
     <string name="validate">Valider</string>
     <string name="ok">Ok</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Annuler</string>
     <string name="save">Sauver</string>
     <string name="delete">Supprimer</string>
 

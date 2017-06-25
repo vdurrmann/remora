@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity
         DataBaseErrorListener {
 
     //Data
-    protected OperatorController m_operator_controller;
     protected PatientController m_patient_controller;
 
     @Override
@@ -31,9 +30,6 @@ public class MainActivity extends AppCompatActivity
         setContentView( R.layout.activity_main );
 
         // Get data from database
-        m_operator_controller = new OperatorController();
-        m_operator_controller.setErrorListener( this );
-
         m_patient_controller = new PatientController();
         m_patient_controller.setErrorListener( this );
 
@@ -69,16 +65,9 @@ public class MainActivity extends AppCompatActivity
             l_title = getString( R.string.nav_add_prod );
             newFragment = new AddProductionFragment();
 
-            m_operator_controller.setListener( (OperatorListenerInterface)newFragment );
-            m_operator_controller.fetchOnDB( getApplicationContext() );
-
         } else if (id == R.id.nav_operators) {
             l_title = getString( R.string.nav_operators );
             newFragment = new OperatorsFragment();
-
-            m_operator_controller.setListener( (OperatorListenerInterface)newFragment );
-            m_operator_controller.fetchOnDB( getApplicationContext() );
-
         }
         else if (id == R.id.nav_patients) {
             l_title = getString( R.string.nav_patients );

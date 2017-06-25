@@ -1,11 +1,16 @@
 package vd.remora.Operator;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,10 +19,12 @@ import vd.remora.R;
 
 public class OperatorAdapter extends ArrayAdapter<Operator> {
 
-    int m_selected_item;
+    private int m_selected_item;
+    private OperatorController m_operator_controller = null;
 
-    public OperatorAdapter(Context context, List<Operator> a_operators) {
+    public OperatorAdapter(Context context, List<Operator> a_operators, OperatorController a_operator_controller ) {
         super(context, 0, a_operators);
+        m_operator_controller = a_operator_controller;
     }
 
     public void setSelectedItem( int a_selected_item ){
@@ -44,6 +51,7 @@ public class OperatorAdapter extends ArrayAdapter<Operator> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.name.setText( operator.getName() );
+        viewHolder.btn_delete.setOnClickListener( new DeleteClickListener( operator.getName() ) );
 
         boolean l_selected = m_selected_item == position;
         viewHolder.btn_delete.setVisibility( l_selected ? View.VISIBLE : View.GONE);
@@ -52,8 +60,46 @@ public class OperatorAdapter extends ArrayAdapter<Operator> {
     }
 
     private class OperatorViewHolder{
-        public TextView name;
-        public Button btn_delete;
+        TextView name;
+        Button btn_delete;
+    }
+
+    private class DeleteClickListener implements View.OnClickListener {
+
+        private String m_name;
+
+        private DeleteClickListener( String a_name ){
+            m_name = a_name;
+        }
+
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
+            builder.setTitle( getContext().getString(R.string.ope_delete_title) );
+
+            // Set up the input
+            final TextView l_txt = new TextView( getContext() );
+            l_txt.setGravity(Gravity.CENTER);
+            l_txt.setText( getContext().getString( R.string.ope_delete_instr, m_name) );
+            builder.setView( l_txt );
+
+            // Set up the buttons
+            builder.setPositiveButton( getContext().getString(R.string.delete), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_operator_controller.deleteOperator( getContext(), m_name );
+                }
+            });
+            builder.setNegativeButton( getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+
     }
 
 }
