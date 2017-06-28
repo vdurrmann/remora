@@ -16,12 +16,14 @@ public class DBScripts {
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
-    private static final String PHP_SELECT_PATIENT = "db_rfid_Select_patient.php";
+    private static final String PHP_SELECT_PATIENT = "db_rfid_select_patient.php";
+    private static final String PHP_SELECT_PATIENT_PROD = "db_rfid_select_patient_prod.php";
 
     private static final String PHP_INSERT_OPERATOR = "db_rfid_insert_operator.php";
     private static final String PHP_DELETE_OPERATOR = "db_rfid_delete_operator.php";
 
     private static final String PHP_ALL_STEPS = "db_rfid_all_steps.php";
+    private static final String PHP_FIND_STEP_ORDER = "db_rfid_find_step_order.php";
     private static final String PHP_INSERT_STEPS = "db_rfid_insert_steps.php";
     private static final String PHP_DELETE_STEPS = "db_rfid_delete_steps.php";
 
@@ -34,7 +36,9 @@ public class DBScripts {
     public static final String KEY_PATIENT_FOLDER = "folder";
     public static final String KEY_PATIENT_STEP = "step";
     public static final String KEY_PATIENT_DATE = "date";
+
     public static final String KEY_STEP_NAME = "name";
+    public static final String KEY_STEP_ORDER = "order";
 
 
     private String m_server;
@@ -106,6 +110,12 @@ public class DBScripts {
         return l_url;
     }
 
+    public String findStepOrderURL( String a_step_name ){
+        String l_url = _addDBConnectionData( PHP_FIND_STEP_ORDER );
+        l_url+="&step="+a_step_name;
+        return l_url;
+    }
+
     public String insertStepURL( String a_step_name ){
         String l_url = _addDBConnectionData( PHP_INSERT_STEPS );
         l_url += "&name=" + a_step_name;
@@ -123,6 +133,12 @@ public class DBScripts {
     public String findPatientURL(String a_folder){
         String l_url = _addDBConnectionData( PHP_FIND_PATIENT );
         l_url += "&folder=" + a_folder;
+        return l_url;
+    }
+
+    public String selectPatientProdURL(String a_step_order){
+        String l_url = _addDBConnectionData( PHP_SELECT_PATIENT_PROD );
+        l_url+="&step_order="+a_step_order;
         return l_url;
     }
 

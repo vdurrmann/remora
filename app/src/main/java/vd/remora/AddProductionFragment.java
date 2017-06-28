@@ -139,10 +139,8 @@ public class AddProductionFragment extends Fragment
         m_loading.dismiss();
     }
 
-    @Override
-    public void onOperatorCreated(boolean a_created) {}
-    @Override
-    public void onOperatorDeleted(boolean a_deleted) {}
+    @Override public void onOperatorCreated(boolean a_created) {}
+    @Override public void onOperatorDeleted(boolean a_deleted) {}
 
     @Override
     public void setSteps(ArrayList<String> a_steps) {
@@ -150,13 +148,11 @@ public class AddProductionFragment extends Fragment
         m_loading.dismiss();
     }
 
-    @Override
-    public void onStepCreated(boolean l_ok) {}
-    @Override
-    public void onStepDeleted(boolean l_ok) {}
+    @Override public void onStepCreated(boolean l_ok) {}
+    @Override public void onStepDeleted(boolean l_ok) {}
+    @Override public void onStepOrderFound(String a_order) {}
 
-    @Override
-    public void setPatients(ArrayList<Patient> a_patients) {}
+    @Override public void setPatients(ArrayList<Patient> a_patients) {}
 
     @Override
     public void onPatientFound(String a_patient_name) {

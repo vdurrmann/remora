@@ -37,6 +37,9 @@
     <string name="step_add_title">Ajouter une étape</string>
     <string name="step_created_ok">Etape créée</string>
 
+    // Patient fragment
+    <string name="patient_steps">Etape courante :</string>
+
     // Common
     <string name="validate">Valider</string>
     <string name="ok">Ok</string>

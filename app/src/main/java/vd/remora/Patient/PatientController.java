@@ -94,6 +94,27 @@ public class PatientController {
         requestQueue.add(stringRequest);
     }
 
+    public void findPatientProd( final Context a_context, String a_state_order ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.selectPatientProdURL( a_state_order );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                _responseToLists(response, m_patients);
+                _notifyListener();
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
     public void updatePatientProductionStep( Context a_context, String a_folder, String a_operator, String a_production_step ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
         String url = l_DBScripts.insertProductionURL( a_operator, a_production_step, a_folder );

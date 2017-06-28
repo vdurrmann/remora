@@ -10,4 +10,6 @@ public interface ProductionStepListenerInterface {
 
     void onStepDeleted( boolean l_ok );
 
+    void onStepOrderFound( String a_order );
+
 }

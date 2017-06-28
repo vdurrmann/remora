@@ -101,6 +101,26 @@ public class ProductionStepController {
         requestQueue.add(stringRequest);
     }
 
+    public void findStepOrder( final Context a_context, String a_step_name ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String url = l_DBScripts.findStepOrderURL( a_step_name );
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                    m_listener.onStepOrderFound( _getStepOrder(response) );
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
     private void _allStepsResponseToList(String response, ArrayList<String> a_steps){
         a_steps.clear();
 
@@ -115,6 +135,21 @@ public class ProductionStepController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private String _getStepOrder( String a_response ){
+        try {
+            JSONObject jsonObject = new JSONObject(a_response);
+            JSONArray result = jsonObject.getJSONArray(DBScripts.JSON_ARRAY);
+
+            for (int i = 0; i < result.length(); i++){
+                JSONObject obj = result.getJSONObject(i);
+                return obj.getString(DBScripts.KEY_STEP_ORDER);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void _notifyErrorListener( String a_error ){

@@ -132,6 +132,8 @@ public class ProductionStepFragment extends Fragment
         Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
     }
 
+    @Override public void onStepOrderFound(String a_order) {}
+
     @Override
     public void onError(String response) {
         Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
