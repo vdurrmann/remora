@@ -50,7 +50,7 @@ public class DBScripts {
         m_server = a_preferences.getString( "pref_server", "" );
         m_username = a_preferences.getString( "pref_username", "" );
         m_password = a_preferences.getString( "pref_password", "" );
-        m_database = a_preferences.getString( "pref_database", "" );
+        m_database = "db_rfid"; //a_preferences.getString( "pref_database", "" );
     }
 
     public String testDBConnection(){
@@ -75,15 +75,15 @@ public class DBScripts {
     public String insertProductionURL(String a_operator, String a_step, String a_folder){
         // Get now data
         GregorianCalendar l_now = new GregorianCalendar();
-        java.text.SimpleDateFormat l_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.text.SimpleDateFormat l_format = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String l_date = l_format.format( l_now.getTimeInMillis() );
 
         // Create URL
         String l_url = _addDBConnectionData( PHP_INSERT_PROD );
         l_url += "&date=" + l_date;
+        l_url += "&folder=" + a_folder;
         l_url += "&operator=" + a_operator;
         l_url += "&step=" + a_step;
-        l_url += "&folder=" + a_folder;
         return l_url;
     }
 

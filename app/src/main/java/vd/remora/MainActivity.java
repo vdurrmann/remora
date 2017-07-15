@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity
             l_title = getString( R.string.nav_add_prod );
             newFragment = new AddProductionFragment();
 
-        } else if (id == R.id.nav_operators) {
+        }
+        /*else if (id == R.id.nav_operators) {
             l_title = getString( R.string.nav_operators );
             newFragment = new OperatorsFragment();
         }
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_patients) {
             l_title = getString( R.string.nav_patients );
             newFragment = new PatientFragment();
-        }
+        }*/
         else if( id == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
             startActivity( l_intent );

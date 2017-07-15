@@ -4,17 +4,19 @@
     <group android:checkableBehavior="single"
         android:id="@+id/group_features">
 
+        <!--
         <item
             android:id="@+id/nav_patients"
             android:icon="@drawable/ic_menu_people"
             android:title="@string/nav_patients" />
-
+        -->
         <item
             android:id="@+id/nav_add_prod"
             android:icon="@drawable/ic_menu_tick"
             android:title="@string/nav_add_prod" />
     </group>
 
+    <!--
     <group android:checkableBehavior="single"
         android:id="@+id/group_management">
 
@@ -29,7 +31,7 @@
             android:title="@string/nav_prod_step" />
 
     </group>
-
+    -->
     <group android:checkableBehavior="single"
         android:id="@+id/group_settings">
 

@@ -116,8 +116,10 @@ public class PatientController {
     }
 
     public void updatePatientProductionStep( Context a_context, String a_folder, String a_operator, String a_production_step ){
+        String l_formatted_folder = Patient.formatFolder(a_folder);
+
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.insertProductionURL( a_operator, a_production_step, a_folder );
+        String url = l_DBScripts.insertProductionURL( a_operator, a_production_step, l_formatted_folder );
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
