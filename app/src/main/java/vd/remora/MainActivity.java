@@ -12,8 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private HashMap<Integer, Fragment> m_fragments = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +38,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Select default Fragment
-        MenuItem l_default_item = navigationView.getMenu().getItem(0);
-        l_default_item.setChecked(true);
-        this.onNavigationItemSelected( l_default_item );
+        // On first instance creation
+        // Create only once fragments
+        if( savedInstanceState == null ){
+            m_fragments.put(R.id.nav_add_prod, new AddProductionFragment());
+
+            // Select default Fragment
+            MenuItem l_default_item = navigationView.getMenu().getItem(0);
+            l_default_item.setChecked(true);
+            this.onNavigationItemSelected( l_default_item );
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -45,13 +57,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         // Choose right Fragment and actionbar title
-        Fragment newFragment = null;
+        Fragment newFragment = m_fragments.get(id);
         String l_title = getSupportActionBar().getTitle().toString();
 
         if (id == R.id.nav_add_prod) {
             l_title = getString( R.string.nav_add_prod );
-            newFragment = new AddProductionFragment();
-
         }
         /*else if (id == R.id.nav_operators) {
             l_title = getString( R.string.nav_operators );

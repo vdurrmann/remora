@@ -90,12 +90,43 @@ public class AddProductionFragment extends Fragment
         });
 
         // Fill UI
-        m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
+        if( savedInstanceState == null ) {
+            m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
+            m_operator_controller.fetchOnDB(getContext());
+            m_steps_controller.fetchOnDB(getContext());
+        }
+        else{
+            this.updateList( savedInstanceState.getStringArrayList("operators"), m_spinner_operator );
+            m_spinner_operator.setSelection( savedInstanceState.getInt("operator_selected") );
 
-        m_operator_controller.fetchOnDB( getContext() );
-        m_steps_controller.fetchOnDB( getContext() );
+            this.updateList( savedInstanceState.getStringArrayList("steps"), m_spinner_steps);
+            m_spinner_steps.setSelection( savedInstanceState.getInt("step_selected") );
+        }
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle outState ){
+        super.onSaveInstanceState(outState);
+
+        // Save operators
+        ArrayList<String> l_operators = new ArrayList<>();
+        int l_nb_operators = m_spinner_operator.getAdapter().getCount();
+        for(int i = 0; i < l_nb_operators; ++i ){
+            l_operators.add(m_spinner_operator.getItemAtPosition(i).toString());
+        }
+        outState.putStringArrayList( "operators", l_operators);
+        outState.putInt("operator_selected", m_spinner_operator.getSelectedItemPosition());
+
+        // Save steps
+        ArrayList<String> l_steps = new ArrayList<>();
+        int l_nb_steps = m_spinner_steps.getAdapter().getCount();
+        for(int i = 0; i < l_nb_steps; ++i ){
+            l_steps.add( m_spinner_steps.getItemAtPosition(i).toString() );
+        }
+        outState.putStringArrayList( "steps", l_steps);
+        outState.putInt("step_selected", m_spinner_steps.getSelectedItemPosition());
     }
 
     protected void updateList( ArrayList<String> a_list, Spinner a_spinner ){
