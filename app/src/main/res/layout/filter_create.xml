@@ -24,6 +24,7 @@
             android:id="@+id/filter_create_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:hint="NAME"
             />
 
         <TextView
@@ -55,13 +56,10 @@
             android:layout_height="wrap_content"
             android:text="Etapes"/>
 
-        <Spinner
-            android:id="@+id/filter_create_spinner_steps"
+        <ListView
+            android:id="@+id/filter_create_step_list"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"/>
+            android:layout_height="wrap_content" />
 
         </GridLayout>
 

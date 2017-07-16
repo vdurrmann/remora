@@ -2,23 +2,34 @@ package vd.remora.Filter;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
+import vd.remora.ProductionStep.ProductionStep;
 import vd.remora.R;
 
 public class FilterCreateView extends RelativeLayout {
 
+    // Own widgets
     private EditText m_txt_name;
     private Button m_btn_date_start;
     private Button m_btn_date_end;
+    private ListView m_steps_view;
 
+    // Attribute to manage data choice
     private GregorianCalendar m_date_start;
     private GregorianCalendar m_date_end;
 
@@ -27,14 +38,12 @@ public class FilterCreateView extends RelativeLayout {
         this._init();
     }
 
-    public FilterCreateView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this._init();
-    }
-
-    public FilterCreateView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        this._init();
+    /** Set available production steps for step spinner **/
+    public void setSteps( ArrayList<String> a_steps ){
+        FilterCreateSelectStepsAdapter l_adapter = (FilterCreateSelectStepsAdapter) m_steps_view.getAdapter();
+        l_adapter.clear();
+        l_adapter.addAll( a_steps );
+        l_adapter.notifyDataSetChanged();
     }
 
     public String name(){
@@ -90,6 +99,11 @@ public class FilterCreateView extends RelativeLayout {
                 }
             }
         });
+
+        m_steps_view = (ListView) findViewById( R.id.filter_create_step_list );
+        List<ProductionStep> l_steps = new ArrayList<>();
+        FilterCreateSelectStepsAdapter l_adapter = new FilterCreateSelectStepsAdapter( getContext(), l_steps );
+        m_steps_view.setAdapter( l_adapter );
     }
 
     private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
