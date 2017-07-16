@@ -6,6 +6,9 @@ import android.preference.PreferenceManager;
 
 import java.io.InputStream;
 import java.util.GregorianCalendar;
+import java.util.Vector;
+
+import vd.remora.Filter.Filter;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -87,6 +90,8 @@ public class DBScripts {
         return l_url;
     }
 
+    //######### Operators ##########
+
     public String createInsertOperatorURL(String a_name){
         GregorianCalendar l_now = new GregorianCalendar();
         java.text.SimpleDateFormat l_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -104,6 +109,8 @@ public class DBScripts {
         l_url += "&name=" + a_operator;
         return l_url;
     }
+
+    //######### Production Steps ##########
 
     public String allStepsURL(){
         String l_url = _addDBConnectionData( PHP_ALL_STEPS );
@@ -128,7 +135,7 @@ public class DBScripts {
         return l_url;
     }
 
-
+    //######### Patients ##########
 
     public String findPatientURL(String a_folder){
         String l_url = _addDBConnectionData( PHP_FIND_PATIENT );
@@ -144,6 +151,24 @@ public class DBScripts {
 
     public String createSelectPatientURL(){
         String l_url = _addDBConnectionData( PHP_SELECT_PATIENT );
+        return l_url;
+    }
+
+    //######### Filter ##########
+    private static final String PHP_FILTER_INSERT = "db_rfid_filter_create.php";
+
+    public String createFilter( Filter a_filter ){
+        String l_url = _addDBConnectionData( PHP_FILTER_INSERT );
+        l_url += "&date_start=" + a_filter.dateStart();
+        l_url += "&date_end=" + a_filter.dateEnd();
+
+        String l_steps = "";
+        Vector<String> l_vec_steps = a_filter.steps();
+        for(int i = 0; i < l_vec_steps.size(); ++i ){
+            l_steps += l_vec_steps.elementAt(i) + ";";
+        }
+        l_url += "&steps=" + l_steps;
+        l_url += "&name=" + a_filter.name();
         return l_url;
     }
 

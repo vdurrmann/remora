@@ -32,6 +32,11 @@
             android:icon="@drawable/ic_menu_step"
             android:title="@string/nav_prod_step" />
 
+        <item
+            android:id="@+id/nav_filter"
+            android:icon="@drawable/ic_menu_sort"
+            android:title="FILTER" />
+
     </group>
 
     <group android:checkableBehavior="single"

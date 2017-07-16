@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         if( savedInstanceState == null ){
             m_fragments.put(R.id.nav_add_prod, new AddProductionFragment());
             m_fragments.put(R.id.nav_prod_steps, new ProductionStepFragment());
+            m_fragments.put(R.id.nav_filter, new FragmentFilter());
 
             // Select default Fragment
             MenuItem l_default_item = navigationView.getMenu().getItem(0);
@@ -68,6 +69,9 @@ public class MainActivity extends AppCompatActivity
         }
         else if( m_current_fragment == R.id.nav_prod_steps ) {
             l_title = getString(R.string.nav_prod_step);
+        }
+        else if( m_current_fragment == R.id.nav_filter ){
+            l_title = "FILTER";
         }
         /*else if (id == R.id.nav_operators) {
             l_title = getString( R.string.nav_operators );
