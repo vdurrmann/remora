@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private HashMap<Integer, Fragment> m_fragments = new HashMap<>();
+    private int m_current_fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         // Create only once fragments
         if( savedInstanceState == null ){
             m_fragments.put(R.id.nav_add_prod, new AddProductionFragment());
+            m_fragments.put(R.id.nav_prod_steps, new ProductionStepFragment());
 
             // Select default Fragment
             MenuItem l_default_item = navigationView.getMenu().getItem(0);
@@ -54,14 +57,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        m_current_fragment = item.getItemId();
 
         // Choose right Fragment and actionbar title
-        Fragment newFragment = m_fragments.get(id);
+        Fragment newFragment = m_fragments.get(m_current_fragment);
         String l_title = getSupportActionBar().getTitle().toString();
 
-        if (id == R.id.nav_add_prod) {
+        if ( m_current_fragment == R.id.nav_add_prod) {
             l_title = getString( R.string.nav_add_prod );
+        }
+        else if( m_current_fragment == R.id.nav_prod_steps ) {
+            l_title = getString(R.string.nav_prod_step);
         }
         /*else if (id == R.id.nav_operators) {
             l_title = getString( R.string.nav_operators );
@@ -75,7 +81,7 @@ public class MainActivity extends AppCompatActivity
             l_title = getString( R.string.nav_patients );
             newFragment = new PatientFragment();
         }*/
-        else if( id == R.id.nav_settings ){
+        else if( m_current_fragment == R.id.nav_settings ){
             Intent l_intent = new Intent( this, PreferenceActivity.class );
             startActivity( l_intent );
         }
@@ -102,5 +108,14 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if( m_current_fragment == R.id.nav_prod_steps ) {
+            getMenuInflater().inflate(R.menu.menu_step, menu);
+        }
+
+        return true;
+    }*/
 
 }

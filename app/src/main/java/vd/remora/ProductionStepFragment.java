@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,12 +32,16 @@ public class ProductionStepFragment extends Fragment
         implements ProductionStepListenerInterface, DataBaseErrorListener{
 
     private ListView m_list_view;
+    private ProductionStep m_selected_step;
+
     private ProgressDialog m_loading;
 
     private ProductionStepController m_steps_controller = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.setHasOptionsMenu(true);
+
         View view = inflater.inflate( R.layout.fragment_production_step, container, false );
 
         m_steps_controller = new ProductionStepController();
@@ -54,8 +61,8 @@ public class ProductionStepFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ProductionStepAdapter l_adapter = (ProductionStepAdapter) m_list_view.getAdapter();
-                l_adapter.setSelectedItem( position );
                 l_adapter.notifyDataSetChanged();
+                m_selected_step = l_adapter.getItem(position);
             }
         });
 
@@ -76,6 +83,43 @@ public class ProductionStepFragment extends Fragment
         m_steps_controller.fetchOnDB( getContext() );
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+        inflater.inflate( R.menu.menu_step, menu );
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        int l_id = item.getItemId();
+
+        if( l_id == R.id.menu_step_delete){
+            AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
+            builder.setTitle("Supprimer une étape");
+            builder.setMessage("Voulez-vous vraiment supprimer cette étape ?");
+            builder.setPositiveButton("Supprimer", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_steps_controller.deleteStep( getContext(), m_selected_step.getName() );
+                }
+            });
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+            return true;
+        }
+        else if( l_id == R.id.menu_step_edit ){
+            // TODO create dialog to edit production step
+            return true;
+        }
+
+        return false;
     }
 
     void addNewStep(){
