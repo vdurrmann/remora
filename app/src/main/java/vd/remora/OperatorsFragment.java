@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -63,7 +64,7 @@ public class OperatorsFragment extends Fragment
         });
 
         //
-        FloatingActionButton l_btn = (FloatingActionButton)view.findViewById( R.id.btn_add_operator );
+        Button l_btn = (Button)view.findViewById( R.id.btn_add_operator );
         l_btn.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View v) {
