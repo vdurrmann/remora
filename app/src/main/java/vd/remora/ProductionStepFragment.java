@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -16,23 +15,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import vd.remora.Operator.OperatorAdapter;
-import vd.remora.ProductionStep.ProductionStepListenerInterface;
 import vd.remora.ProductionStep.ProductionStep;
 import vd.remora.ProductionStep.ProductionStepAdapter;
 import vd.remora.ProductionStep.ProductionStepController;
+import vd.remora.ProductionStep.ProductionStepListenerInterface;
 
 public class ProductionStepFragment extends Fragment
         implements ProductionStepListenerInterface, DataBaseErrorListener{
 
     private ListView m_list_view;
-    private ProductionStep m_selected_step;
+    private ProductionStep m_selected_step = null;
 
     private ProgressDialog m_loading;
 
@@ -61,13 +60,18 @@ public class ProductionStepFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ProductionStepAdapter l_adapter = (ProductionStepAdapter) m_list_view.getAdapter();
+                l_adapter.setSelectedId(position);
                 l_adapter.notifyDataSetChanged();
                 m_selected_step = l_adapter.getItem(position);
+                // Force to update option menu
+                getActivity().invalidateOptionsMenu();
             }
         });
 
-        //
-        FloatingActionButton l_btn = (FloatingActionButton)view.findViewById( R.id.btn_add_step );
+        // item is unselected on entry
+        m_selected_step = null;
+
+        Button l_btn = (Button)view.findViewById( R.id.btn_add_step );
         l_btn.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -91,13 +95,22 @@ public class ProductionStepFragment extends Fragment
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu ){
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem l_delete_item = menu.findItem(R.id.menu_step_delete);
+        boolean l_is_selected = m_selected_step != null && m_selected_step.getName().equals("");
+        l_delete_item.setVisible( l_is_selected );
+    }
+
+    @Override
     public boolean onOptionsItemSelected (MenuItem item){
         int l_id = item.getItemId();
 
         if( l_id == R.id.menu_step_delete){
             AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
             builder.setTitle("Supprimer une étape");
-            builder.setMessage("Voulez-vous vraiment supprimer cette étape ?");
+            builder.setMessage("Voulez-vous vraiment supprimer " + m_selected_step.getName() + " ?");
             builder.setPositiveButton("Supprimer", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -112,10 +125,6 @@ public class ProductionStepFragment extends Fragment
             });
 
             builder.show();
-            return true;
-        }
-        else if( l_id == R.id.menu_step_edit ){
-            // TODO create dialog to edit production step
             return true;
         }
 
@@ -180,7 +189,9 @@ public class ProductionStepFragment extends Fragment
 
     @Override
     public void onError(String response) {
-        Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
+        View l_view = getView();
+        if( l_view == null ){ return; }
+        Snackbar.make( l_view, response, Snackbar.LENGTH_LONG ).show();
 
         Intent l_intent = new Intent( getActivity(), PreferenceActivity.class );
         startActivity( l_intent );

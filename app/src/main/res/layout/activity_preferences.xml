@@ -73,8 +73,7 @@
             android:layout_height="wrap_content"
             android:text="@string/test"
             android:layout_weight="50"
-            android:layout_margin="16dp"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            android:layout_margin="16dp"/>
 
         <Button
             android:id="@+id/btn_save"

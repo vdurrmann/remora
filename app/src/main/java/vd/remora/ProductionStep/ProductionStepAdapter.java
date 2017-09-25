@@ -2,6 +2,7 @@ package vd.remora.ProductionStep;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,8 +20,14 @@ import vd.remora.R;
 
 public class ProductionStepAdapter extends ArrayAdapter<ProductionStep> {
 
+    int m_selected_id;
+
     public ProductionStepAdapter(Context context, List<ProductionStep> a_steps, ProductionStepController a_step_controller ) {
         super(context, 0, a_steps);
+    }
+
+    public void setSelectedId( int a_id ){
+        m_selected_id = a_id;
     }
 
     @Override
@@ -41,6 +48,14 @@ public class ProductionStepAdapter extends ArrayAdapter<ProductionStep> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.name.setText( l_step.getName() );
+
+        // Update background color
+        if( position == m_selected_id ){
+            convertView.setBackgroundColor(Color.LTGRAY);
+        }
+        else{
+            convertView.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         return convertView;
     }
