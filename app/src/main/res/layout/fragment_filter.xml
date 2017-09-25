@@ -10,16 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/filter_btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
+        android:text="@string/add"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:elevation="7dp"
+        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
         android:backgroundTint="@color/colorPrimary" />
 

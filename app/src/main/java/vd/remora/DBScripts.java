@@ -156,6 +156,11 @@ public class DBScripts {
 
     //######### Filter ##########
     private static final String PHP_FILTER_INSERT = "db_rfid_filter_create.php";
+    private static final String PHP_FILTER_SELECT_ALL = "db_rfid_filter_select_all.php";
+
+    public static final String KEY_FILTER_NAME = "name";
+    public static final String KEY_FILTER_DATE_START = "date_start";
+    public static final String KEY_FILTER_DATE_END = "date_end";
 
     public String createFilter( Filter a_filter ){
         String l_url = _addDBConnectionData( PHP_FILTER_INSERT );
@@ -169,6 +174,11 @@ public class DBScripts {
         }
         l_url += "&steps=" + l_steps;
         l_url += "&name=" + a_filter.name();
+        return l_url;
+    }
+
+    public String selectAllFilter(){
+        String l_url = _addDBConnectionData(PHP_FILTER_SELECT_ALL);
         return l_url;
     }
 

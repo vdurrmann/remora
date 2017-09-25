@@ -1,6 +1,7 @@
 package vd.remora.Filter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,25 +15,30 @@ import vd.remora.R;
 
 public class FilterAdapter extends ArrayAdapter<Filter> {
 
+    int m_selected_id = -1;
+
     public FilterAdapter(Context context, List<Filter> a_patients) {
         super(context, 0, a_patients);
+    }
+
+    public void setSelectedId( int a_id ){
+        m_selected_id = a_id;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // TODO layout_rox
-        /*if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate( R.layout.filter_create,parent, false);
-        }*/
+        if(convertView == null){
+            convertView = LayoutInflater.from(getContext()).inflate( R.layout.filter_row,parent, false);
+        }
 
         FilterViewHolder viewHolder = (FilterViewHolder) convertView.getTag();
         if(viewHolder == null){
             viewHolder = new FilterViewHolder();
             viewHolder.name = (TextView) convertView.findViewById(R.id.filter_row_name);
-            /*viewHolder.date_start = (TextView) convertView.findViewById(R.id.filter_row_date_start);
+            viewHolder.date_start = (TextView) convertView.findViewById(R.id.filter_row_date_start);
             viewHolder.data_end = (TextView) convertView.findViewById(R.id.filter_row_date_end);
-            viewHolder.steps = (Spinner) convertView.findViewById(R.id.filter_row_steps);*/
+            /*viewHolder.steps = (Spinner) convertView.findViewById(R.id.filter_row_steps);*/
             convertView.setTag(viewHolder);
         }
 
@@ -44,6 +50,14 @@ public class FilterAdapter extends ArrayAdapter<Filter> {
         viewHolder.date_start.setText( l_filter.dateStart() );
         viewHolder.data_end.setText( l_filter.dateEnd() );
         //TODO viewHolder.steps.set( l_patient.date() );
+
+        // Update background color
+        if( position == m_selected_id ){
+            convertView.setBackgroundColor(Color.LTGRAY);
+        }
+        else{
+            convertView.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         return convertView;
     }

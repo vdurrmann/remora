@@ -40,6 +40,9 @@
     // Patient fragment
     <string name="patient_steps">Etape courante :</string>
 
+    // Filter fragment
+    <string name="filter_created_ok">Filtre crée</string>
+
     // Common
     <string name="validate">Valider</string>
     <string name="ok">Ok</string>

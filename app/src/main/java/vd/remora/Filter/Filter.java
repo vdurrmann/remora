@@ -4,9 +4,9 @@ import java.util.Vector;
 
 public class Filter {
 
-    private String m_name;
-    private String m_date_start;
-    private String m_date_end;
+    private String m_name = "";
+    private String m_date_start = "";
+    private String m_date_end = "";
     private Vector<String> m_vec_steps;
 
     public Filter(){

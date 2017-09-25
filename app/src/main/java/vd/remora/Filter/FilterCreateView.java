@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -61,11 +63,11 @@ public class FilterCreateView extends RelativeLayout {
         return l_format.format( m_date_end.getTimeInMillis() );
     }
 
-
     protected void _init(){
         inflate(getContext(), R.layout.filter_create, this);
 
         m_txt_name = (EditText)findViewById( R.id.filter_create_name );
+        m_txt_name.setOnFocusChangeListener( new HideKeyboardOnFocusChangeListener() );
 
         m_date_start = new GregorianCalendar();
         m_date_end = new GregorianCalendar();
@@ -77,6 +79,7 @@ public class FilterCreateView extends RelativeLayout {
         m_btn_date_start.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                m_txt_name.clearFocus();
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     DatePickerDialog l_picker = new DatePickerDialog(getContext());
                     l_picker.getDatePicker().setMaxDate( m_date_end.getTimeInMillis() );
@@ -91,6 +94,7 @@ public class FilterCreateView extends RelativeLayout {
         m_btn_date_end.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                m_txt_name.clearFocus();
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     DatePickerDialog l_picker = new DatePickerDialog(getContext());
                     l_picker.getDatePicker().setMinDate( m_date_start.getTimeInMillis() );
@@ -123,6 +127,16 @@ public class FilterCreateView extends RelativeLayout {
                     + "-" + Integer.toString(dayOfMonth);
             m_btn_date.setText( l_date );
             m_date.set(year, month, dayOfMonth);
+        }
+    }
+
+    private class HideKeyboardOnFocusChangeListener implements View.OnFocusChangeListener{
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(!hasFocus) {
+                InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
         }
     }
 }

@@ -15,7 +15,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/filter_row_name"
+            android:id="@+id/filter_create_row_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"/>
