@@ -1,6 +1,7 @@
 package vd.remora;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -10,11 +11,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -76,6 +79,11 @@ public class AddProductionFragment extends Fragment
         m_btn_validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Hide keyboard
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                // Update production step
                 String l_operator = m_spinner_operator.getSelectedItem().toString();
                 String l_step = m_spinner_steps.getSelectedItem().toString();
                 String l_folder = m_txt_folder.getText().toString();
@@ -194,12 +202,12 @@ public class AddProductionFragment extends Fragment
     @Override
     public void onProductionStepUpdated( boolean a_ok ){
         String l_txt = a_ok ? getString(R.string.prod_updated_ok) : getString(R.string.an_error_occured);
-        Snackbar.make( getView(), l_txt, Snackbar.LENGTH_LONG ).show();
+        Toast.makeText( getContext(), l_txt, Toast.LENGTH_LONG ).show();
     }
 
     @Override
     public void onError(String response) {
-        Snackbar.make( getView(), response, Snackbar.LENGTH_LONG ).show();
+        Toast.makeText( getContext(), response, Toast.LENGTH_LONG ).show();
 
         Intent l_intent = new Intent( getActivity(), PreferenceActivity.class );
         startActivity( l_intent );
