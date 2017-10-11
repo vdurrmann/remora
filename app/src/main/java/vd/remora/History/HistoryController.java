@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import vd.remora.DBScripts;
@@ -36,6 +37,10 @@ public class HistoryController {
 
     public ArrayList<History> histories(){
         return m_vec_history;
+    }
+
+    public void setHistories(ArrayList<History> a_histories){
+        m_vec_history = a_histories;
     }
 
     public void fetchoOnDB(Context a_context, int a_nb_history ){

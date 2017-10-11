@@ -127,6 +127,7 @@ public class AddProductionFragment extends Fragment
             m_spinner_steps.setSelection( savedInstanceState.getInt("step_selected") );
 
             this.setHistory(savedInstanceState.<History>getParcelableArrayList("history"));
+            m_history_controller.setHistories(savedInstanceState.<History>getParcelableArrayList("history"));
         }
 
         return view;
@@ -270,7 +271,6 @@ public class AddProductionFragment extends Fragment
             m_table_history.setColumnStretchable(0, true);
             m_table_history.setColumnStretchable(1, true);
             m_table_history.setColumnStretchable(2, true);
-            m_table_history.setColumnStretchable(3, true);
             m_table_history.addView(l_row);
         }
     }
