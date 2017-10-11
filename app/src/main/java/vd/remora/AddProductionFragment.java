@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -124,6 +125,8 @@ public class AddProductionFragment extends Fragment
 
             this.updateList( savedInstanceState.getStringArrayList("steps"), m_spinner_steps);
             m_spinner_steps.setSelection( savedInstanceState.getInt("step_selected") );
+
+            this.setHistory(savedInstanceState.<History>getParcelableArrayList("history"));
         }
 
         return view;
@@ -150,6 +153,8 @@ public class AddProductionFragment extends Fragment
         }
         outState.putStringArrayList( "steps", l_steps);
         outState.putInt("step_selected", m_spinner_steps.getSelectedItemPosition());
+
+        outState.putParcelableArrayList("history", m_history_controller.histories());
     }
 
     protected void updateList( ArrayList<String> a_list, Spinner a_spinner ){
@@ -250,9 +255,15 @@ public class AddProductionFragment extends Fragment
         for(int i = 0; i < a_histories.size(); ++i ){
             History l_history = a_histories.get(i);
 
+            String l_patient = "";
+            l_patient += l_history.folder();
+            l_patient += " - ";
+            l_patient += l_history.patientName();
+            l_patient += " ";
+            l_patient += l_history.patientFirstName();
+
             TableRow l_row = new TableRow(getContext());
-            l_row.addView( _createTextView(l_history.date()) );
-            l_row.addView( _createTextView(l_history.folder()) );
+            l_row.addView( _createTextView(l_patient) );
             l_row.addView( _createTextView(l_history.productionStep()) );
             l_row.addView( _createTextView(l_history.operator()) );
 

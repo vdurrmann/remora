@@ -46,6 +46,8 @@ public class DBScripts {
     public static final String KEY_HISTORY_FOLDER = "folder";
     public static final String KEY_HISTORY_OPERATOR = "operator";
     public static final String KEY_HISTORY_STEP = "step";
+    public static final String KEY_HISTORY_PATIENT_NAME = "patient_name";
+    public static final String KEY_HISTORY_PATIENT_FIRSTNAME = "patient_firstname";
 
 
     private String m_server;

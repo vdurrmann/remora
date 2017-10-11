@@ -72,10 +72,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="LAST HISTORY"
+        android:text="@string/valip_step_history"
         android:layout_gravity="start"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"/>
 
     <TableLayout
         android:id="@+id/valid_step_history_array"

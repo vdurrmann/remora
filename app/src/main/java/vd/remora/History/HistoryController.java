@@ -34,6 +34,10 @@ public class HistoryController {
         m_error_listener = a_listerner;
     }
 
+    public ArrayList<History> histories(){
+        return m_vec_history;
+    }
+
     public void fetchoOnDB(Context a_context, int a_nb_history ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
         String url = l_DBScripts.selectHistory(a_nb_history);
@@ -68,8 +72,10 @@ public class HistoryController {
                 String l_folder = obj.getString(DBScripts.KEY_HISTORY_FOLDER);
                 String l_operator = obj.getString(DBScripts.KEY_HISTORY_OPERATOR);
                 String l_step = obj.getString(DBScripts.KEY_HISTORY_STEP);
+                String l_patient_name = obj.getString(DBScripts.KEY_HISTORY_PATIENT_NAME);
+                String l_patient_firstname = obj.getString(DBScripts.KEY_HISTORY_PATIENT_FIRSTNAME);
 
-                History l_history = new History(l_date, l_folder, l_operator, l_step);
+                History l_history = new History(l_date, l_folder, l_operator, l_step, l_patient_name, l_patient_firstname);
                 a_histories.add( l_history );
             }
         } catch (JSONException e) {

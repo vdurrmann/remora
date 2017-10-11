@@ -16,7 +16,11 @@
  }
  
  # Select all cards
- $sql = "SELECT * FROM history ORDER BY date DESC LIMIT $NBHIST";
+ $sql = "SELECT date, patient_folder, operator, name, surname, history.production_state
+		FROM history
+		INNER JOIN patient ON history.patient_folder = patient.folder
+		ORDER BY date DESC
+		LIMIT $NBHIST";
 
  $r = mysqli_query($con,$sql);
  
@@ -28,6 +32,8 @@
 		"step"=>$row["production_state"],
 		"folder"=>$row["patient_folder"],
 		"operator"=>$row["operator"],
+		"patient_name"=>$row["name"],
+		"patient_firstname"=>$row["surname"],
 		)
 	);
  }
