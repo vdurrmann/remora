@@ -14,6 +14,8 @@ public class DBScripts {
     private static final String PHP_TEST_CONNECTION = "db_test_connect.php";
 
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
+    private static final String PHP_SELECT_HISTORY = "db_rfid_select_history.php";
+
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
     private static final String PHP_SELECT_PATIENT = "db_rfid_select_patient.php";
@@ -39,6 +41,11 @@ public class DBScripts {
 
     public static final String KEY_STEP_NAME = "name";
     public static final String KEY_STEP_ORDER = "order";
+
+    public static final String KEY_HISTORY_DATE = "date";
+    public static final String KEY_HISTORY_FOLDER = "folder";
+    public static final String KEY_HISTORY_OPERATOR = "operator";
+    public static final String KEY_HISTORY_STEP = "step";
 
 
     private String m_server;
@@ -84,6 +91,12 @@ public class DBScripts {
         l_url += "&folder=" + a_folder;
         l_url += "&operator=" + a_operator;
         l_url += "&step=" + a_step;
+        return l_url;
+    }
+
+    public String selectHistory( int a_nb_history ){
+        String l_url = _addDBConnectionData( PHP_SELECT_HISTORY );
+        l_url += "&limit=" + Integer.toString(a_nb_history);
         return l_url;
     }
 

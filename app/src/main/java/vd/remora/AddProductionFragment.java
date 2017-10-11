@@ -16,11 +16,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import vd.remora.History.History;
+import vd.remora.History.HistoryController;
+import vd.remora.History.HistoryListenerInterface;
 import vd.remora.Operator.OperatorController;
 import vd.remora.Operator.OperatorListenerInterface;
 import vd.remora.ProductionStep.ProductionStepListenerInterface;
@@ -33,6 +38,7 @@ public class AddProductionFragment extends Fragment
         implements OperatorListenerInterface,
         PatientListenerInterface,
         ProductionStepListenerInterface,
+        HistoryListenerInterface,
         DataBaseErrorListener
 {
 
@@ -43,11 +49,13 @@ public class AddProductionFragment extends Fragment
     Spinner m_spinner_steps;
     EditText m_txt_folder;
     TextView m_txt_patient;
+    TableLayout m_table_history;
 
     //Data
     private PatientController m_patient_controller = null;
     private OperatorController m_operator_controller = null;
     private ProductionStepController m_steps_controller = null;
+    private HistoryController m_history_controller = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +73,10 @@ public class AddProductionFragment extends Fragment
         m_steps_controller = new ProductionStepController();
         m_steps_controller.setListener( this );
         m_steps_controller.setErrorListener( this );
+
+        m_history_controller = new HistoryController();
+        m_history_controller.setListener( this );
+        m_history_controller.setErrorListener( this );
 
         // UI
         m_spinner_operator = (Spinner) view.findViewById( R.id.spinner_operator);
@@ -97,11 +109,14 @@ public class AddProductionFragment extends Fragment
             }
         });
 
+        m_table_history = (TableLayout) view.findViewById( R.id.valid_step_history_array );
+
         // Fill UI
         if( savedInstanceState == null ) {
             m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
             m_operator_controller.fetchOnDB(getContext());
             m_steps_controller.fetchOnDB(getContext());
+            m_history_controller.fetchoOnDB(getContext(),5);
         }
         else{
             this.updateList( savedInstanceState.getStringArrayList("operators"), m_spinner_operator );
@@ -203,6 +218,14 @@ public class AddProductionFragment extends Fragment
     public void onProductionStepUpdated( boolean a_ok ){
         String l_txt = a_ok ? getString(R.string.prod_updated_ok) : getString(R.string.an_error_occured);
         Toast.makeText( getContext(), l_txt, Toast.LENGTH_LONG ).show();
+
+        if( a_ok ){
+            // Update history table
+            m_history_controller.fetchoOnDB(getContext(), 5);
+
+            // Reset UI
+            m_txt_folder.setText("");
+        }
     }
 
     @Override
@@ -214,4 +237,30 @@ public class AddProductionFragment extends Fragment
         this.getActivity().finish();
     }
 
+    private TextView _createTextView( String a_txt ){
+        TextView l_date = new TextView(getContext());
+        l_date.setText( a_txt );
+        return l_date;
+    }
+
+    @Override
+    public void setHistory(ArrayList<History> a_histories) {
+        m_table_history.removeAllViews();
+
+        for(int i = 0; i < a_histories.size(); ++i ){
+            History l_history = a_histories.get(i);
+
+            TableRow l_row = new TableRow(getContext());
+            l_row.addView( _createTextView(l_history.date()) );
+            l_row.addView( _createTextView(l_history.folder()) );
+            l_row.addView( _createTextView(l_history.productionStep()) );
+            l_row.addView( _createTextView(l_history.operator()) );
+
+            m_table_history.setColumnStretchable(0, true);
+            m_table_history.setColumnStretchable(1, true);
+            m_table_history.setColumnStretchable(2, true);
+            m_table_history.setColumnStretchable(3, true);
+            m_table_history.addView(l_row);
+        }
+    }
 }
