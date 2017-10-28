@@ -222,7 +222,7 @@ public class AddProductionFragment extends Fragment
         @Override
         public void afterTextChanged(Editable s) {
             if( s.toString().length() > 0 ) {
-                m_patient_controller.findPatient( getContext(), m_txt_folder.getText().toString() );
+                m_patient_controller.findPatient( getContext(), s.toString() );
             }
             else{
                 onPatientFound("");
