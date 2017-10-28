@@ -6,4 +6,6 @@ public interface HistoryListenerInterface {
 
     void setHistory(ArrayList<History> a_histories );
 
+    void lastHistoryRemoved();
+
 }

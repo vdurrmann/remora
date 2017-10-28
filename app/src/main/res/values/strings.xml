@@ -26,6 +26,10 @@
     <string name="prod_updated_ok">Etape validée</string>
     <string name="valip_step_history">Dernières étapes validées</string>
 
+    <string name="addprod_cancel_last_step">Supprimer l\'étape</string>
+    <string name="addprod_cancel_instr">Supprimer la dernière étape validée ?</string>
+    <string name="last_history_removed">Etape supprimé</string>
+
     // Operator fragment
     <string name="ope_delete_title">Supprimer un opérateur</string>
     <string name="ope_delete_instr">Voulez-vous supprimer l\'opéraeur %1$s ?</string>

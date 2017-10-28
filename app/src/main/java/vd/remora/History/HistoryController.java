@@ -23,6 +23,7 @@ import vd.remora.DataBaseErrorListener;
 public class HistoryController {
 
     private ArrayList<History> m_vec_history = new ArrayList<>();
+    private int m_nb_last_history = 3; // Number of history to fetch
 
     private HistoryListenerInterface m_listener = null;
     private DataBaseErrorListener m_error_listener = null;
@@ -43,14 +44,34 @@ public class HistoryController {
         m_vec_history = a_histories;
     }
 
-    public void fetchoOnDB(Context a_context, int a_nb_history ){
+    public void fetchoOnDB(Context a_context ){
         DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
-        String url = l_DBScripts.selectHistory(a_nb_history);
+        String url = l_DBScripts.selectHistory(m_nb_last_history);
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 _ResponseToHistoryList( response, m_vec_history );
                 m_listener.setHistory( m_vec_history );
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        _notifyErrorListener( error.toString() );
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue( a_context );
+        requestQueue.add(stringRequest);
+    }
+
+    public void removeLastHistory(final Context a_context ){
+        DBScripts l_DBScripts = new DBScripts( PreferenceManager.getDefaultSharedPreferences(a_context) );
+        String l_url = l_DBScripts.removeLastHistory();
+        StringRequest stringRequest = new StringRequest(l_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                m_listener.lastHistoryRemoved();
             }
         },
                 new Response.ErrorListener() {

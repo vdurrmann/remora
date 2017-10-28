@@ -2,14 +2,18 @@ package vd.remora;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -29,11 +33,11 @@ import vd.remora.History.HistoryController;
 import vd.remora.History.HistoryListenerInterface;
 import vd.remora.Operator.OperatorController;
 import vd.remora.Operator.OperatorListenerInterface;
-import vd.remora.ProductionStep.ProductionStepListenerInterface;
 import vd.remora.Patient.Patient;
 import vd.remora.Patient.PatientController;
 import vd.remora.Patient.PatientListenerInterface;
 import vd.remora.ProductionStep.ProductionStepController;
+import vd.remora.ProductionStep.ProductionStepListenerInterface;
 
 public class AddProductionFragment extends Fragment
         implements OperatorListenerInterface,
@@ -61,6 +65,7 @@ public class AddProductionFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_prod, container, false);
+        this.setHasOptionsMenu(true);
 
         // Controllers
         m_patient_controller = new PatientController();
@@ -117,7 +122,7 @@ public class AddProductionFragment extends Fragment
             m_loading = ProgressDialog.show( getActivity(), "Please wait...", "Updating data...", false, false );
             m_operator_controller.fetchOnDB(getContext());
             m_steps_controller.fetchOnDB(getContext());
-            m_history_controller.fetchoOnDB(getContext(),5);
+            m_history_controller.fetchoOnDB(getContext());
         }
         else{
             this.updateList( savedInstanceState.getStringArrayList("operators"), m_spinner_operator );
@@ -156,6 +161,42 @@ public class AddProductionFragment extends Fragment
         outState.putInt("step_selected", m_spinner_steps.getSelectedItemPosition());
 
         outState.putParcelableArrayList("history", m_history_controller.histories());
+    }
+
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.menu_add_production, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_AddProd_cancel_last_history:
+                AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
+                builder.setTitle( getContext().getString(R.string.addprod_cancel_last_step) );
+                // Set up the input
+                final TextView l_txt = new TextView( getContext() );
+                l_txt.setGravity(Gravity.CENTER);
+                l_txt.setText( getContext().getString(R.string.addprod_cancel_instr) );
+                builder.setView( l_txt );
+                builder.setPositiveButton( getContext().getString(R.string.delete), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_history_controller.removeLastHistory(getContext());
+                    }
+                });
+                builder.setNegativeButton( getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     protected void updateList( ArrayList<String> a_list, Spinner a_spinner ){
@@ -227,7 +268,7 @@ public class AddProductionFragment extends Fragment
 
         if( a_ok ){
             // Update history table
-            m_history_controller.fetchoOnDB(getContext(), 5);
+            m_history_controller.fetchoOnDB(getContext());
 
             // Reset UI
             m_txt_folder.setText("");
@@ -273,5 +314,11 @@ public class AddProductionFragment extends Fragment
             m_table_history.setColumnStretchable(2, true);
             m_table_history.addView(l_row);
         }
+    }
+
+    @Override
+    public void lastHistoryRemoved() {
+        Toast.makeText( getContext(), R.string.last_history_removed, Toast.LENGTH_LONG ).show();
+        m_history_controller.fetchoOnDB(getContext());
     }
 }

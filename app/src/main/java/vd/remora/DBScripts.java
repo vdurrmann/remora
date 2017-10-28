@@ -1,13 +1,8 @@
 package vd.remora;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import java.io.InputStream;
 import java.util.GregorianCalendar;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class DBScripts {
 
@@ -15,6 +10,7 @@ public class DBScripts {
 
     private static final String PHP_INSERT_PROD = "db_rfid_insert_prod.php";
     private static final String PHP_SELECT_HISTORY = "db_rfid_select_history.php";
+    private static final String PHP_REMOVE_LAST_HISTORY = "db_rfid_delete_last_history.php";
 
     private static final String PHP_ALL_CARDS = "db_rfid_all_cards.php";
     private static final String PHP_FIND_PATIENT = "db_rfid_find_patient.php";
@@ -99,6 +95,11 @@ public class DBScripts {
     public String selectHistory( int a_nb_history ){
         String l_url = _addDBConnectionData( PHP_SELECT_HISTORY );
         l_url += "&limit=" + Integer.toString(a_nb_history);
+        return l_url;
+    }
+
+    public String removeLastHistory(){
+        String l_url = _addDBConnectionData( PHP_REMOVE_LAST_HISTORY );
         return l_url;
     }
 
